@@ -1,8 +1,8 @@
 # Backend
-backend/venv/
-backend/__pycache__/
-backend/*.pyc
-backend/dist/
+rogerlib/venv/
+rogerlib/__pycache__/
+rogerlib/*.pyc
+rogerlib/dist/
 
 # Frontend
 frontend/node_modules/
