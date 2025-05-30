@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=64.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rogerlib"
+version = "0.1.0"
+authors = [
+    { name="Andy Bui", email="buiand@fastmail.com" },
+]
+description = "Roger Motorsports Library"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "arrow",
+    "astroid",
+    "beautifulsoup4",
+    "blinker",
+    "bs4",
+    "boto3",
+    "certifi",
+    "charset-normalizer",
+    "click",
+    "dill",
+    "Flask",
+    "Flask-S3",
+    "idna",
+    "iniconfig",
+    "isort",
+    "itsdangerous",
+    "Jinja2",
+    "MarkupSafe",
+    "mccabe",
+    "packaging",
+    "platformdirs",
+    "pluggy",
+    "pycodestyle",
+    "pydocstyle",
+    "pylint",
+    "pytest",
+    "python-dateutil",
+    "psycopg2-binary",
+    "requests",
+    "setuptools",
+    "six",
+    "snowballstemmer",
+    "soupsieve",
+    "tomlkit",
+    "types-python-dateutil",
+    "urllib3",
+    "Werkzeug"
+]
+
+
+[tool.setuptools]
+packages = ["rogerlib",
+            "rogerlib.api",
+            "rogerlib.views",
+            "rogerlib.templates",
+            "rogerlib.js"]
+
+[tool.pylint."messages control"]
+disable = ["cyclic-import"]
