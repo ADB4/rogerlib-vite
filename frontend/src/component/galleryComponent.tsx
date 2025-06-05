@@ -110,6 +110,7 @@ export default function GalleryComponent({ outData }) {
                             'preview': model.preview,
                             'imagepath': model.imagepath,
                             'images': model.images,
+                            'models': model.models,
                             'version': model.version,
                         };
                         itemArray.push(itemDict);

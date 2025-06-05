@@ -5,7 +5,7 @@ import { useState } from "react";
 import { DetailContext, useColorModeContext} from "../context/galleryContext";
 import { useDevice } from "../hooks/useDevice";
 import { compactDescriptionHeader, compactExitButton } from "../style/modelDetailStyles";
-import ModelViewerComponent from "../component/modelViewer";
+import ModelViewerV2Component from "./modelViewerV2";
 import DetailDescriptionComponent from "../component/detailDescriptionComponent";
 import DownloadComponent from "../component/downloadComponent";
 
@@ -67,14 +67,6 @@ export default function DetailContainerComponent({ inData, outData }) {
         scaledResolution = 512;
         detailContainerHeight = scaledResolution + 192;
         // left container for model viewer
-        detailLeft = {
-            height: "auto",
-            minWidth: scaledResolution+"px",
-        };
-        detailRight = {
-            height: "auto",
-            minWidth: scaledResolution+"px",
-        };
     }
     let descriptionWhitespace = {
         height: compactView ? ("4rem") : ("3rem"),
@@ -83,8 +75,13 @@ export default function DetailContainerComponent({ inData, outData }) {
     };
     exitButtonStyle = compactExitButton;
     const textColor: React.CSSProperties = {
-        color: darkMode? "black":"black",
-        backgroundColor: darkMode ? "white":"white",
+        color: darkMode? "#3B6F88":"black",
+        backgroundColor: darkMode ? "#0a0a0a":"white",
+    };
+    const modelDetailContainer: React.CSSProperties = {
+        color: darkMode ? "#dedede":"black",
+        backgroundColor: darkMode ? "#1f1f1f":"white",
+        outline: darkMode ? "2px solid #1f1f1f":"2px solid #c6c6c6",
     };
     const desktopDescriptionHeader: React.CSSProperties = {
         gridColumnStart: "1",
@@ -102,63 +99,41 @@ export default function DetailContainerComponent({ inData, outData }) {
         fontWeight: "300",
     };
     return (
-        <div style={textColor} id={compactView ? ("model-detail-container-compact"):("model-detail-standard-container")}>
+        <div style={modelDetailContainer} id={compactView ? ("model-detail-container-compact"):("model-detail-standard-outer")}>
             <div className="exit-button" style={exitButtonStyle} onClick={() => {handleClose()}}>
                     <p>CLOSE</p>
             </div>
+            <div className="model-detail-standard-inner">
             <DetailContext.Provider value={{'item': inData.item, 'imageresolution': scaledResolution}}>
-            {compactView && (
-                <>
-                {toggleView && (
-                    <div id="model-detail-compact-left" style={detailLeft}>
-                        <ModelViewerComponent inData={{item: inData.item, imageresolution: scaledResolution}} outData={handleToggleView}/>
-                    </div>
-                )}
-                {!toggleView && (
-                    <div id="model-detail-compact-right" style={detailRight}>
-                        <DetailHeaderComponent inData={{'item': inData.item,
-                                                'style': compactDescriptionHeader}}/>
-                        <DetailDescriptionComponent inData={{'item': inData.item,
-                                                            'imageresolution': scaledResolution,
-                                                            'containerheight': detailContainerHeight,
-                                                            'style': compactDescriptionHeader}}/>
-                        <div className="model-detail-actions">
-                            <div className="description-download-container">
-                                <DownloadComponent inData={{'item': inData.item}}/>
-                            </div>
-                            <div className="model-detail-toggle-container" style={detailToggle}>
-                                <button className="model-detail-toggle-container-inner" style={detailToggleDark} onClick={() => {handleToggleView()}}><p style={detailToggleText}>TOGGLE MODEL VIEWER</p></button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </>
-            )}
             {!compactView && (
                 <>
-                    <div id="model-detail-standard-left" style={detailLeft}>
-                        <ModelViewerComponent inData={{item: inData.item, imageresolution: scaledResolution}} outData={handleToggleView}/>
+                    <div id="model-detail-standard-left">
+                        <ModelViewerV2Component inData={{item: inData.item, imageresolution: scaledResolution}} outData={handleToggleView}/>
                     </div>
-                    <div id="model-detail-standard-right" style={detailRight}>
+                    <div id="model-detail-standard-right">
                         <DetailHeaderComponent inData={{'item': inData.item,
                                                 'style': desktopDescriptionHeader}}/>
                         <DetailDescriptionComponent inData={{'item': inData.item,
                                                             'imageresolution': scaledResolution,
                                                             'containerheight': detailContainerHeight,
                                                             'style': compactDescriptionHeader}}/>
-                        <div className="model-detail-actions">
-                            <div className="description-download-container">
-                                <DownloadComponent inData={{'item': inData.item}}/>
-                            </div>
-                        </div>
+
 
                     </div>
                 </>
             )}
             </DetailContext.Provider>
+            </div>
         </div>
     )
 }
+/*
+                        <div className="model-detail-actions">
+                            <div className="description-download-container">
+                                <DownloadComponent inData={{'item': inData.item}}/>
+                            </div>
+                        </div>
+*/
 
 export function DetailHeaderComponent({ inData }) {    
     return (

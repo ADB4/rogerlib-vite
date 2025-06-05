@@ -85,26 +85,6 @@ def fetch_deets():
     }
     return deets
 
-def fetch_resume():
-    try:
-        s3_config = Config(region_name='us-east-2')
-        s3_client = boto3.client('s3',
-                                aws_access_key_id=rogerlib.app.config['AWS_ACCESS_KEY'],
-                                aws_secret_access_key=rogerlib.app.config['AWS_SECRET_KEY'],
-                                config=s3_config)
-        bucket = rogerlib.app.config["AWS_S3_DOWNLOAD_BUCKET"]
-        methodParams = {
-            'Bucket': bucket,
-            'Key': "assets/andybuiresumex.pdf"
-        }
-        url = s3_client.generate_presigned_url(
-            ClientMethod='get_object', 
-            Params=methodParams, 
-            ExpiresIn=600
-        )
-    except ClientError:
-        raise
-    return url
 
 def fetch_obfuscated_path(model):
     category = model['category']
@@ -150,6 +130,7 @@ def parse_item(model):
     lodcounts = lodcount_raw.split(",")
     lodMap = {}
     lodArr = []
+    modelURLs = []
     triCountMap = {}
     i = 0
     for lod in lodcounts:
@@ -158,11 +139,13 @@ def parse_item(model):
         triCountMap[lodKey] = lod
         lodArr.append(lodKey)
         lodMap[lodKey] = lodValue
+        modelURLs.append(str.format("https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/{0}/{0}_lod{1}.gltf", itemcode.lower(), i))
         i = i+1
 
     model['lods'] = lodArr
     model['lodmap'] = lodMap
     model['polycount'] = triCountMap
+    model['models'] = modelURLs
     # parse colors into dictionary for key=colorCode value=colorName
     colors_raw = model['colors']
     colorslist_raw = str(model['colors']).split(",")
@@ -201,6 +184,7 @@ def parse_item(model):
     model['imagepath'] = imagePath
 
     return model
+
 
 # fetch paths for all images associated with an item
 def fetch_item_images(resolution, itemcode):
@@ -341,6 +325,10 @@ def fetch_categories():
             bisect.insort(subcategories_list, subcat.upper())
             categoryMap[cat].append(subcat)
     return categoryMap
+
+def fetch_changelog():
+    changelog = fetch_json_s3("changelog/changelog.json")
+    return changelog
 
 def fetch_object_s3(filename):
     try:

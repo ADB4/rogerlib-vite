@@ -3,9 +3,11 @@ from re import M
 import flask
 import datetime
 from rogerlib import app
+import json
+import os
 import random
 import secrets
-from rogerlib.views.util import fetch_one_from_json, fetch_all_json, fetch_categories, fetch_categories_json, fetch_presigned_url, fetch_quote_s3, fetch_markdown_s3, fetch_deets
+from rogerlib.views.util import fetch_one_from_json, fetch_all_json, fetch_categories, fetch_categories_json, fetch_presigned_url, fetch_quote_s3, fetch_markdown_s3, fetch_deets, fetch_changelog
 
 @app.route('/api/v1/cntct/', methods=['GET'])
 def get_cntct():
@@ -48,6 +50,7 @@ def get_item(itemcode):
         'timestamp': str(ct),
         'preview': model['preview'],
         'imagepath': model['imagepath'],
+        'models': model['models'],
         'itemcode': itemcode,
         'itemname': model['itemname'],
         'category': model['category'],
@@ -80,6 +83,7 @@ def get_all_items():
         model_dict = {
             'preview': model['preview'],
             'imagepath': model['imagepath'],
+            'models': model['models'],
             'itemcode': model['itemcode'],
             'itemname': model['itemname'],
             'category': model['category'],
@@ -95,6 +99,11 @@ def get_all_items():
             'shader': model['shader'],
             'version': model['version'],
         }
+        json_ob = json.dumps(model_dict, indent=4)
+        bakepath = str.format("bake/{0}.json", model['itemcode'].lower())
+        os.makedirs(os.path.dirname(bakepath), exist_ok=True)
+        with open(str.format("bake/{0}.json", model['itemcode'].lower()), "w+") as f:
+                  f.write(json_ob)
         models.append(model_dict)
     
     context = {
@@ -120,6 +129,17 @@ def get_categories():
 @app.route('/api/v1/quotes/random/', methods=['GET'])
 def get_quotes():
     context = fetch_quote_s3()
+    return flask.jsonify(**context)
+
+@app.route('/api/v1/changelog/', methods=['GET'])
+def get_changelog():
+    ct = datetime.datetime.now()
+    changelog = fetch_changelog()
+    context = {
+        'changelog': changelog,
+        'timestamp': str(ct),
+        'url': flask.request.path,
+    }
     return flask.jsonify(**context)
 
 @app.route('/api/v1/downloads/<itemcode>', methods=['GET'])

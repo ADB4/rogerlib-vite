@@ -7,6 +7,7 @@ import { useDevice } from './hooks/useDevice';
 import HomeComponent from './component/homeComponent';
 import CntctComponent from './component/cntctComponent';
 import AboutComponent from './component/aboutComponent';
+import ChangelogComponent from "./component/changeComponent";
 
 import type { ColorModeContextType } from "./context/galleryContext";
 import './App.css'
@@ -128,6 +129,11 @@ export default function App() {
                               style={h1style}>
                             CONTACT
                         </Link>
+                        <Link role="button" to="/changelog"             
+                              className="roger-header-nav-link"
+                              style={h1style}>
+                            CHANGELOG
+                        </Link>
                     </nav>
                     <div id="web-color-toggle-container">
                         <div id="web-color-toggle-background"
@@ -168,6 +174,11 @@ export default function App() {
                     <Route path="/cntct" element={
                         <>
                             <CntctComponent outData={handleColorToggle}/>
+                        </>
+                    }/>
+                    <Route path="/changelog" element={
+                        <>
+                            <ChangelogComponent outData={handleColorToggle}/>
                         </>
                     }/>
                 </Routes>

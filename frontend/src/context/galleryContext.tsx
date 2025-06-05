@@ -70,6 +70,7 @@ export interface ItemType {
     preview: string;
     imagepath: string;
     images: string[];
+    models: string[]; // array where index corresponds to LOD
     itemcode: string;
     itemname: string;
     category: string;
