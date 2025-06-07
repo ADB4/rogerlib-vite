@@ -7,6 +7,7 @@ import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import {
     Environment,
     OrbitControls,
+    OrthographicCamera,
     Html,
     useProgress,
     Wireframe,
@@ -52,11 +53,25 @@ export default function ModelComponent(props) {
     return (
         <>
             <div className="model-view-module" style={viewContainerStyle}>
-                <Canvas orthographic camera={{ zoom: 75, position: [90, 45, 100] }}>
+                <Canvas>
                 <Suspense fallback={<Loader />}>
                         <GLTFComponent models={props.models} textures={props.textures} itemcode={props.itemcode}/>
                         <LightingComponent />
-                        <OrbitControls />
+                        <OrbitControls 
+                            autoRotate={true}
+                            autoRotateSpeed={2.0}
+                        />
+                        <OrthographicCamera
+                            makeDefault
+                            zoom={75}
+                            top={200}
+                            bottom={-200}
+                            left={200}
+                            right={-200}
+                            near={1}
+                            far={2000}
+                            position={[90,45,400]}
+                        />
                 </Suspense>
                 </Canvas>
             </div>
