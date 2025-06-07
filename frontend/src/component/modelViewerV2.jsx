@@ -22,8 +22,9 @@ Takes input: {item}
 */
 export default function ModelViewerV2Component({ inData, outData }) {
     const { darkMode, setDarkMode } = useColorModeContext();
-    const [activeImage, setActiveImage] = useState('');
-    const [activeItem, setActiveItem] = useState('');
+    const [activeModels, setActiveModels] = useState([]);
+    const [activeTextureSet, setActiveTextureSet] = useState([]);
+    const [activeItem, setActiveItem] = useState();
     const [viewState, setViewState] = useState({
         lod: "NULL",
         shading: "NULL",
@@ -44,10 +45,23 @@ export default function ModelViewerV2Component({ inData, outData }) {
     const modelRef = useRef();
     function handleConfigUpdate(data) {
         // construct new active image url
-        let modelURL = `https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/trw0/tirew0_${data.lod.toLowerCase()}.gltf`;
-        //let modelURL = `tirew0_${data.lod.toLowerCase()}.gltf`;
-        //console.log(modelURL);
-        setActiveImage(modelURL);
+        const item = inData.item;
+        
+        // if LOD has changed, load new model set/textures if necessary
+        if (data.lod != viewState.lod) {
+            let index = parseInt(data.lod[3]);
+            let modelArr = item.models[index].slice();
+            console.log(modelArr);
+            // check if LOD uses different texture set
+            if (item.texturemap[viewState.lod] != item.texturemap[data.lod]) {
+                let texIndex = parseInt(item.texturemap[data.lod]);
+                let textureArr = item.texturesets[texIndex].slice();
+                console.debug(textureArr);
+                setActiveTextureSet(textureArr);
+            }
+            setActiveModels(modelArr);
+        }
+        let lodString = "lod" + (item.lods.length - 1).toString();
         setViewState(data);
     }
 /*
@@ -56,12 +70,18 @@ export default function ModelViewerV2Component({ inData, outData }) {
     useEffect(() => {
         const item = inData.item;
         let lodString = "lod" + (item.lods.length - 1).toString();
-        let defaultImage = `https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/tirew0/tirew0_${lodString}.gltf`;
         let lodArr = item.lods.slice();
         let colors = item.colors.slice();
-
-        setActiveImage(defaultImage);
-        setActiveItem(`${item.itemcode}_${lodString}`);
+        console.log(item);
+        let texIndex = item.texturesets.length - 1;
+        // determine which model(s) need to be loaded
+        let modelArr = item.models[item.lods.length - 1].slice();
+        let textureArr = item.texturesets[texIndex].slice();
+        console.log(modelArr);
+        setActiveModels(modelArr);
+        setActiveTextureSet(textureArr);
+        console.log(textureArr);
+        setActiveItem(item.itemcode);
         // set default view
         const initialstate = {
             lod: lodString,
@@ -84,7 +104,7 @@ export default function ModelViewerV2Component({ inData, outData }) {
     return (
         <>  
             <ViewerStateContext.Provider value={viewState}>
-                <ModelComponent url={activeImage} itemcode={activeItem} material={new THREE.MeshBasicMaterial()}/>
+                <ModelComponent models={activeModels} textures={activeTextureSet} itemcode={activeItem} />
                 <ViewerDashboardComponent inData={inData.item} outData={handleConfigUpdate}/>
             </ViewerStateContext.Provider>
         </>

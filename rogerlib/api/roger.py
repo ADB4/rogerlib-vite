@@ -7,7 +7,7 @@ import json
 import os
 import random
 import secrets
-from rogerlib.views.util import fetch_one_from_json, fetch_all_json, fetch_categories, fetch_categories_json, fetch_presigned_url, fetch_quote_s3, fetch_markdown_s3, fetch_deets, fetch_changelog
+from rogerlib.views.util import fetch_one_from_json, fetch_all_json, fetch_json_s3, fetch_categories, fetch_categories_json, fetch_presigned_url, fetch_quote_s3, fetch_markdown_s3, fetch_deets, fetch_changelog
 
 @app.route('/api/v1/cntct/', methods=['GET'])
 def get_cntct():
@@ -44,13 +44,16 @@ def get_item(itemcode):
     """Return item from itemcode"""
     ct = datetime.datetime.now()
 
-    model = fetch_one_from_json(itemcode.lower())
+    model = fetch_json_s3(str.format("models/{0}/{0}.json"))
+    # model = fetch_one_from_json(itemcode.lower())
 
     context = {
         'timestamp': str(ct),
         'preview': model['preview'],
         'imagepath': model['imagepath'],
         'models': model['models'],
+        'texturemap': model['texturemap'],
+        'texturesets': model['texturesets'],
         'itemcode': itemcode,
         'itemname': model['itemname'],
         'category': model['category'],
@@ -73,44 +76,10 @@ def get_item(itemcode):
 def get_all_items():
     """Return all items"""
     ct = datetime.datetime.now()
-
     result = fetch_all_json()
-    context = {}
-    models = []
-    libraryinfo = "### Welcome to Roger Motorsports Library!&nbsp;  &nbsp;  \n#### Roger Motorsport Library (RML) is a repository of polygon-optimized 3D assets that are ready-for-use in game engines such as Unreal and Unity.&nbsp;  \n#### If you can use these models in the pursuit of a larger endeavor, such as environment design or as physics objects, please feel at liberty to use them royalty-free.&nbsp;  \n#### I'll be doing the same, and documenting the process in my weblog.&nbsp;"
-    librarycontact = "### Questions?&nbsp;  &nbsp;  \n#### For questions, please find me at andy@rogerlibrary.com  \n#### You may also find my personal website below."
-    for model in result:
-        model_dict = {
-            'preview': model['preview'],
-            'imagepath': model['imagepath'],
-            'models': model['models'],
-            'itemcode': model['itemcode'],
-            'itemname': model['itemname'],
-            'category': model['category'],
-            'subcategory': model['subcategory'],
-            'lods': model['lods'],
-            'lodmap': model['lodmap'],
-            'polycount': model['polycount'],
-            'material': model['material'],
-            'colormap': model['colormap'],
-            'colors': model['colorcodes'],
-            'description': model['description'],
-            'creatornote': model['creatornote'],
-            'shader': model['shader'],
-            'version': model['version'],
-        }
-        json_ob = json.dumps(model_dict, indent=4)
-        bakepath = str.format("bake/{0}.json", model['itemcode'].lower())
-        os.makedirs(os.path.dirname(bakepath), exist_ok=True)
-        with open(str.format("bake/{0}.json", model['itemcode'].lower()), "w+") as f:
-                  f.write(json_ob)
-        models.append(model_dict)
-    
     context = {
-        'models': models,
+        'models': result,
         'timestamp': str(ct),
-        'info': libraryinfo,
-        'cntct': librarycontact,
         'url': flask.request.path,
     }
     return flask.jsonify(**context)

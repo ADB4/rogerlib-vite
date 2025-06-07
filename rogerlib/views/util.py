@@ -130,7 +130,6 @@ def parse_item(model):
     lodcounts = lodcount_raw.split(",")
     lodMap = {}
     lodArr = []
-    modelURLs = []
     triCountMap = {}
     i = 0
     for lod in lodcounts:
@@ -139,13 +138,11 @@ def parse_item(model):
         triCountMap[lodKey] = lod
         lodArr.append(lodKey)
         lodMap[lodKey] = lodValue
-        modelURLs.append(str.format("https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/{0}/{0}_lod{1}.gltf", itemcode.lower(), i))
         i = i+1
 
     model['lods'] = lodArr
     model['lodmap'] = lodMap
     model['polycount'] = triCountMap
-    model['models'] = modelURLs
     # parse colors into dictionary for key=colorCode value=colorName
     colors_raw = model['colors']
     colorslist_raw = str(model['colors']).split(",")
@@ -277,12 +274,26 @@ def fetch_all():
 
 # Fetch all items from json
 def fetch_all_json():
+    data = fetch_json_s3("models/json/models.json")
+    return data
+
+def hydrate():
     data = fetch_json_s3("models/models.json")
     result = data['models']
     models = []
     for model in result:
-        models.append(parse_item(model))
-    
+        hydrated_model = parse_item(model)
+        models.append(hydrated_model)
+        json_ob = json.dumps(hydrated_model, indent=4)
+        bakepath = str.format("bake/{0}.json", model['itemcode'].lower())
+        os.makedirs(os.path.dirname(bakepath), exist_ok=True)
+        with open(str.format("bake/{0}.json", model['itemcode'].lower()), "w+") as f:
+                  f.write(json_ob)
+    json_ob = json.dumps(models, indent=4)
+    modelspath = "bake/models.json"
+    os.makedirs(os.path.dirname(modelspath), exist_ok=True)
+    with open("bake/models.json", "w+") as f:
+                f.write(json_ob)
     return models
 
 def fetch_categories_json():

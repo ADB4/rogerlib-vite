@@ -66,11 +66,20 @@ export const useColorModeContext = () => {
 export interface DictType {
     [key: string]: string;
 }
+
+export interface TextureSetType {
+    id: string;
+    alpha: string;
+    displacement: string;
+    maps: string[]
+}
 export interface ItemType {
     preview: string;
     imagepath: string;
     images: string[];
     models: string[]; // array where index corresponds to LOD
+    texturesets: TextureSetType[];
+    texturemap: DictType;
     itemcode: string;
     itemname: string;
     category: string;

@@ -45,25 +45,7 @@ export default function ModelComponent(props) {
         color: "NULL",
         wireframe: true,
     });
-    const [url, setUrl] = useState("");
     const compactView = useDevice();
-
-
-
-    // 3D MANIPULATION
-    const meshRef = useRef();
-    const Model = () => {
-        const gltf = useLoader(GLTFLoader, props.url);
-        return (
-            <mesh ref={meshRef}>
-                <meshStandardMaterial attach="material" color="#424242" roughness={0.5} metalness={0.3}/>
-                <primitive 
-                object={gltf.scene} 
-                scale={1.0}
-                dispose={null} />
-            </mesh>
-        )
-    };
     const viewContainerStyle = {
         backgroundColor: darkMode ? "transparent":"white",
     };
@@ -72,7 +54,7 @@ export default function ModelComponent(props) {
             <div className="model-view-module" style={viewContainerStyle}>
                 <Canvas orthographic camera={{ zoom: 75, position: [90, 45, 100] }}>
                 <Suspense fallback={<Loader />}>
-                        <GLTFComponent url={props.url} itemcode={props.itemcode}/>
+                        <GLTFComponent models={props.models} textures={props.textures} itemcode={props.itemcode}/>
                         <LightingComponent />
                         <OrbitControls />
                 </Suspense>
@@ -92,57 +74,90 @@ export default function ModelComponent(props) {
                                         color="white"
                                         intensity={1.0} />
 */
+
+/*
+props
+itemcode: string
+models: string[]
+*/
 export function GLTFComponent(props) {
     const view = useViewerStateContext();
+
+    useEffect(() => {
+        console.log(props.models);
+    },[props]);
+    return (
+        <group {...props} dispose={null}>
+            {props.models.map((model, i) => (
+                <GLTFLoaderComponent key={model} itemcode={props.itemcode} textures={props.textures[i]} filename={model}/>
+            ))}
+        </group>
+    )
+}
+
+/*
+props
+itemcode: string
+filename: string
+*/
+export function GLTFLoaderComponent(props) {
+    const view = useViewerStateContext();
+    const { nodes, materials } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/gltf/${props.filename}`);
     const meshRef = useRef();
-    const { nodes, materials } = useGLTF(props.url);
 
     // materials
     const materialWF = useRef(new THREE.MeshStandardMaterial({color: 'red', wireframe: true }));
     const materialSolid = useRef(new THREE.MeshStandardMaterial({ color: '#757575', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1}));
-
-    // map
-    // TODO: in default state, view.color is NULL
-    const [colorMap, displacementMap, normalMap, roughnessMap, metalnessMap] = useLoader(THREE.TextureLoader, [
-        `https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/tirew0/tex/tirew0_color_${view.color}.jpg`,
-        "https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/tirew0/tex/tirew0_height.jpg",
-        "https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/tirew0/tex/tirew0_normal.jpg",
-        "https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/tirew0/tex/tirew0_roughness.jpg",
-        "https://d2fhlomc9go8mv.cloudfront.net/static/models/gltf/tirew0/tex/tirew0_metallic.jpg"
-      ]);
-    colorMap.flipY = displacementMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = false;
-
+    useEffect(() => {
+        console.log(nodes);
+    },[props]);
     // the second key in nodes is our object name
     const keys = Object.keys(nodes);
     const k = keys[1];
     const geo = nodes[k].geometry;
     return (
-        <group {...props} dispose={null}>
-        {view.material == 'solid' && (
-            <>
-            {view.wireframe && (
-                <mesh ref={meshRef} geometry={geo} material={materialWF.current} />
-            )}
-            <mesh ref={meshRef} geometry={geo} material={materialSolid.current}>
-            </mesh>
-          </>
+        <>
+        {view.wireframe == true && (
+            <mesh ref={meshRef} geometry={geo} material={materialWF.current}/>
         )}
-        {view.material == 'albedo' && (
+        {view.material == "solid" && (
             <>
-            <mesh ref={meshRef} geometry={geo}>
-                <meshStandardMaterial
-                    map={colorMap}
-                    normalMap={normalMap}
-                    roughnessMap={roughnessMap}
-                    metalnessMap={metalnessMap}
-                />
-            </mesh>
-            {view.wireframe && (
-                <mesh ref={meshRef} geometry={geo} material={materialWF.current} />
-            )}
+            <mesh ref={meshRef} geometry={geo} material={materialSolid.current}/>
             </>
         )}
-        </group>
+        {view.material == "albedo" && (
+            <mesh ref={meshRef} geometry={geo}>
+                <TextureLoaderComponent textures={props.textures} itemcode={props.itemcode}/>
+            </mesh>
+        )}
+        </>
+    )
+}
+/*
+props
+maps: string[]
+mapkey: string 
+itemcode: string
+alpha: boolean
+displacement: boolean
+*/
+export function TextureLoaderComponent(props) {
+    const view = useViewerStateContext();
+    // TODO: in default state, view.color is NULL
+    const [colorMap, normalMap, roughnessMap, metalnessMap] = useLoader(THREE.TextureLoader, [
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/tex/${props.textures.id}_color_${view.color}.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/tex/${props.textures.id}_normal.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/tex/${props.textures.id}_roughness.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/tex/${props.textures.id}_metallic.jpg`
+      ]);
+    colorMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = false;
+    return (
+        <meshStandardMaterial
+            map={colorMap}
+            normalMap={normalMap}
+            roughnessMap={roughnessMap}
+            metalnessMap={metalnessMap}
+        />
     )
 }
 
@@ -177,6 +192,30 @@ export function LightingComponent() {
 }
 
 /*
+        {view.material == 'solid' && (
+            <>
+            {view.wireframe && (
+                <mesh ref={meshRef} geometry={geo} material={materialWF.current} />
+            )}
+            <mesh ref={meshRef} geometry={geo} material={materialSolid.current}>
+            </mesh>
+          </>
+        )}
+        {view.material == 'albedo' && (
+            <>
+            <mesh ref={meshRef} geometry={geo}>
+                <meshStandardMaterial
+                    map={colorMap}
+                    normalMap={normalMap}
+                    roughnessMap={roughnessMap}
+                    metalnessMap={metalnessMap}
+                />
+            </mesh>
+            {view.wireframe && (
+                <mesh ref={meshRef} geometry={geo} material={materialWF.current} />
+            )}
+            </>
+        )}
             <meshStandardMaterial attach="material" color="#424242" roughness={0.5} metalness={0.3}/>
         useFrame(() => {
             if (meshRef.current) {
