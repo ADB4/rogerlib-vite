@@ -75,9 +75,8 @@ export default function FilterComponent({ outData }) {
 
     }, []);
     const colorScheme: React.CSSProperties = {
-        backgroundColor: darkMode ? "black":"white",
-        color: darkMode ? "white":"black",
-        border: darkMode ? "2px solid white":"2px solid #DFDDD5",
+        backgroundColor: darkMode ? "#1f1f1f":"white",
+        outline: darkMode ? "2px solid #1f1f1f":"2px solid #c6c6c6",
     };
     const textColor: React.CSSProperties = {
         color: darkMode ? "white":"black",
@@ -93,13 +92,14 @@ export default function FilterComponent({ outData }) {
             <div className="lib-nav" style={colorScheme}>
                 {categories.map((category, i) => (
                     <div className="nav-category" key={category}> 
-                        <p onClick={() => handleClick(category, "parent")}>
+                        <p style={textColor} onClick={() => handleClick(category, "parent")}>
                             {category.replace("_"," ").toUpperCase()}
                         </p>
                         <ul className="nav-subcategories">
                         {categoryMap[category].map((subcategory, j) => (
                             <li
                                 key={subcategory}
+                                style={textColor} 
                                 value={subcategory}
                                 onClick={() => handleClick(subcategory, "child")}>
                                     {selection.includes(subcategory) ? "->":""}

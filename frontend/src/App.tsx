@@ -129,11 +129,6 @@ export default function App() {
                               style={h1style}>
                             CONTACT
                         </Link>
-                        <Link role="button" to="/changelog"             
-                              className="roger-header-nav-link"
-                              style={h1style}>
-                            CHANGELOG
-                        </Link>
                     </nav>
                     <div id="web-color-toggle-container">
                         <div id="web-color-toggle-background"
@@ -174,11 +169,6 @@ export default function App() {
                     <Route path="/cntct" element={
                         <>
                             <CntctComponent outData={handleColorToggle}/>
-                        </>
-                    }/>
-                    <Route path="/changelog" element={
-                        <>
-                            <ChangelogComponent outData={handleColorToggle}/>
                         </>
                     }/>
                 </Routes>

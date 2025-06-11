@@ -48,18 +48,18 @@ export default function ModelComponent(props) {
         autoRotate: true,
         speed: 1.0,
     });
-    const [autoRotate, setAutoRotate] = useState(true);
     const compactView = useDevice();
     const orbitRef = useRef();
 
-    const cameraRef = useRef();
     const cameraControlRef = useRef();
 
-    const [lookAtVector, setLookAtVector] = useState(new THREE.Vector3(0,0,0));
     const DEG45 = Math.PI / 4;
     const viewContainerStyle = {
         backgroundColor: darkMode ? "transparent":"white",
     };
+    const viewButton = {
+        
+    }
     function toggleAutoRotate() {
         let newContext = {
             autoRotate: !cameraContext.autoRotate,
@@ -75,14 +75,24 @@ export default function ModelComponent(props) {
         <>
             <ViewerDashboardComponent inData={props.item} outData={props.updateconfig}/>
             <div className="model-view-controller">
+                {compactView && (
                 <button className="model-view-toggle-autorotate"
                         onClick={() => toggleAutoRotate()}>
                             TOGGLE AUTOROTATE
                 </button>
-                <button className="model-view-toggle-autorotate"
+                )}
+                {!compactView && (
+                <>
+                <button className="model-view-rotate-button"
                         onClick={() => {cameraControlRef.current?.rotate(DEG45, 0, true)}}>
                             ROTATE THETA 45DEG
                 </button>
+                <button className="model-view-reset-button"
+                        onClick={() => {cameraControlRef.current?.reset(true)}}>
+                            RESET VIEW
+                </button>
+                </>
+                )}
             </div>
             <div className="model-view-module" style={viewContainerStyle}>
                 <Canvas>
@@ -109,24 +119,7 @@ export function RotatingCamera(props) {
     const CameraContext = useCameraContext();
 
     const cameraRef = useRef();
-/*
-    useFrame((_, delta) => {
-        if (CameraContext.autoRotate) {
-            setRotation((prevRotation) => prevRotation + (delta / 2));
-            camera.position.x = Math.sin(rotation) * props.distance;
-            camera.position.z = Math.cos(rotation) * props.distance;
-            camera.position.y = 30;
-            camera.lookAt(0,0,0);
-        } else {
-            setRotation((prevRotation) => prevRotation);
-            camera.position.x = Math.sin(rotation) * props.distance;
-            camera.position.z = Math.cos(rotation) * props.distance;
-            camera.position.y = 30;
-            camera.lookAt(0,0,0);
-        }
-        camera.updateProjectionMatrix();
-    });
-*/
+
     return (
         <>
         <CameraControls 
@@ -144,7 +137,7 @@ export function RotatingCamera(props) {
             right={-200}
             near={1}
             far={2000}
-            position={[90,90,90]}
+            position={[200,90,200]}
         />
         </>
 
@@ -180,7 +173,24 @@ export function RotatingCamera(props) {
                             far={2000}
                             position={[90,45,200]}
                         />
+    useFrame((_, delta) => {
+        if (CameraContext.autoRotate) {
+            setRotation((prevRotation) => prevRotation + (delta / 2));
+            camera.position.x = Math.sin(rotation) * props.distance;
+            camera.position.z = Math.cos(rotation) * props.distance;
+            camera.position.y = 30;
+            camera.lookAt(0,0,0);
+        } else {
+            setRotation((prevRotation) => prevRotation);
+            camera.position.x = Math.sin(rotation) * props.distance;
+            camera.position.z = Math.cos(rotation) * props.distance;
+            camera.position.y = 30;
+            camera.lookAt(0,0,0);
+        }
+        camera.updateProjectionMatrix();
+    });
 */
+
 /*
 props
 itemcode: string

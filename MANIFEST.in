@@ -1,0 +1,9 @@
+graft rogerlib
+
+# avoid js files
+global-exclude *.js
+global-exclude *.jsx
+
+# avoid dev and binary files
+global-exclude *.pyc
+global-exclude __pycache__

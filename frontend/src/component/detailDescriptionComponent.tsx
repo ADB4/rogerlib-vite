@@ -82,7 +82,7 @@ export default function DetailDescriptionComponent({ inData }) {
     let descriptionSerif: React.CSSProperties = {
         fontFamily: "Swiss721",
         fontWeight: "200",
-        fontSize: "1.125rem",
+        fontSize: "1.0rem",
         margin: "1rem 2rem 1rem",
     };
     let lods = inData.item.lods;

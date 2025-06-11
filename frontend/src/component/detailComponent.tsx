@@ -83,25 +83,20 @@ export default function DetailContainerComponent({ inData, outData }) {
         backgroundColor: darkMode ? "#1f1f1f":"white",
         outline: darkMode ? "2px solid #1f1f1f":"2px solid #c6c6c6",
     };
-    const desktopDescriptionHeader: React.CSSProperties = {
-        gridColumnStart: "1",
-        gridColumnEnd: "-1",
-        gridRowStart: "1",
-        gridRowEnd: "2",
-        height: "4rem",
-        minWidth: "8rem",
-        width: "100%",
-        maxWidth: "16rem",
-        marginTop: "1rem",
-        marginLeft: "1rem",
-        zIndex: "8",
-        fontFamily: "Swiss721",
-        fontWeight: "300",
+
+    const exitButtonContainer: React.CSSProperties = {
+        backgroundColor: darkMode? "black":"#c2c2c2",
+        outline: darkMode? "1px solid #292929":"1px solid #bdbdbd",
+    };
+    const exitButtonText: React.CSSProperties = {
+        color: darkMode? "black":"white",
     };
     return (
         <div style={modelDetailContainer} id={compactView ? ("model-detail-container-compact"):("model-detail-standard-outer")}>
-            <div className="exit-button" style={exitButtonStyle} onClick={() => {handleClose()}}>
-                    <p>CLOSE</p>
+            <div className="exit-button-container" style={exitButtonContainer}>
+                <div className="exit-button" style={exitButtonStyle} onClick={() => {handleClose()}}>
+                        <p style={exitButtonText}>CLOSE</p>
+                </div>
             </div>
             <div className="model-detail-standard-inner">
             <DetailContext.Provider value={{'item': inData.item, 'imageresolution': scaledResolution}}>
@@ -111,8 +106,7 @@ export default function DetailContainerComponent({ inData, outData }) {
                         <ModelViewerV2Component inData={{item: inData.item, imageresolution: scaledResolution}} outData={handleToggleView}/>
                     </div>
                     <div id="model-detail-standard-right">
-                        <DetailHeaderComponent inData={{'item': inData.item,
-                                                'style': desktopDescriptionHeader}}/>
+                        <DetailHeaderComponent inData={{'item': inData.item }}/>
                         <DetailDescriptionComponent inData={{'item': inData.item,
                                                             'imageresolution': scaledResolution,
                                                             'containerheight': detailContainerHeight,
@@ -137,8 +131,8 @@ export default function DetailContainerComponent({ inData, outData }) {
 
 export function DetailHeaderComponent({ inData }) {    
     return (
-        <div id="description-header" style={inData.style}>
-                <h2>{inData.item.itemname}</h2>
+        <div id="description-header">
+                <h2>{inData.item.itemname.toUpperCase()}</h2>
                 <ul>
                     <li>VERSION {inData.item.version}</li>
                     <li>{inData.item.category.toUpperCase()} / {inData.item.subcategory.toUpperCase()}</li>

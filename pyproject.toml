@@ -55,9 +55,7 @@ dependencies = [
 [tool.setuptools]
 packages = ["rogerlib",
             "rogerlib.api",
-            "rogerlib.views",
-            "rogerlib.templates",
-            "rogerlib.js"]
+            "rogerlib.views"]
 
 [tool.pylint."messages control"]
 disable = ["cyclic-import"]
