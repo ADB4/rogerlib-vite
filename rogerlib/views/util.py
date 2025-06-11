@@ -166,6 +166,7 @@ def parse_item(model):
     # /<hash("static")>/<hash("assets")>/<hash(<category>)>/<hash(<category><subcategory>)>/<hash(<category><subcateogry><itemcode>)
     hashedObjectPath = fetch_obfuscated_path(model)
 
+    model['obfuscatedpath'] = hashedObjectPath
     # if dev environment, use local path instead of s3
     if os.environ['FLASK_ENV'] == "development":
         # for testing s3 on dev:
@@ -278,7 +279,7 @@ def fetch_all_json():
     return data
 
 def hydrate():
-    data = fetch_json_s3("models/models.json")
+    data = fetch_json_s3("models/json/models_starter.json")
     result = data['models']
     models = []
     for model in result:

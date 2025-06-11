@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext } from "../context/galleryContext";
 import ModelComponent from "../component/modelComponent";
 import { useDevice } from "../hooks/useDevice";
@@ -51,12 +51,10 @@ export default function ModelViewerV2Component({ inData, outData }) {
         if (data.lod != viewState.lod) {
             let index = parseInt(data.lod[3]);
             let modelArr = item.models[index].slice();
-            console.log(modelArr);
             // check if LOD uses different texture set
             if (item.texturemap[viewState.lod] != item.texturemap[data.lod]) {
                 let texIndex = parseInt(item.texturemap[data.lod]);
                 let textureArr = item.texturesets[texIndex].slice();
-                console.debug(textureArr);
                 setActiveTextureSet(textureArr);
             }
             setActiveModels(modelArr);
@@ -72,20 +70,17 @@ export default function ModelViewerV2Component({ inData, outData }) {
         let lodString = "lod" + (item.lods.length - 1).toString();
         let lodArr = item.lods.slice();
         let colors = item.colors.slice();
-        console.log(item);
         let texIndex = item.texturesets.length - 1;
         // determine which model(s) need to be loaded
         let modelArr = item.models[item.lods.length - 1].slice();
         let textureArr = item.texturesets[texIndex].slice();
-        console.log(modelArr);
         setActiveModels(modelArr);
         setActiveTextureSet(textureArr);
-        console.log(textureArr);
         setActiveItem(item.itemcode);
         // set default view
         const initialstate = {
             lod: lodString,
-            shading: 'flat',
+            shading: 'studio',
             material: 'solid',
             color: 'NULL',
             wireframe: true,
@@ -104,8 +99,7 @@ export default function ModelViewerV2Component({ inData, outData }) {
     return (
         <>  
             <ViewerStateContext.Provider value={viewState}>
-                <ModelComponent models={activeModels} textures={activeTextureSet} itemcode={activeItem} />
-                <ViewerDashboardComponent inData={inData.item} outData={handleConfigUpdate}/>
+                <ModelComponent zoom={inData.item.zoom} models={activeModels} textures={activeTextureSet} itemcode={activeItem} item={inData.item} updateconfig={handleConfigUpdate} />
             </ViewerStateContext.Provider>
         </>
     )
@@ -129,241 +123,3 @@ export default function ModelViewerV2Component({ inData, outData }) {
                     <ViewerDashboardComponent inData={inData.item} outData={handleConfigUpdate}/>
                 </ViewContext.Provider>
 */
-/*
-<DetailParametersComponent inData={inData.item} outData={handleConfigUpdate}/>
-*/
-export function ViewerDashboardComponent({ inData, outData }) {
-    const [viewOptions, setViewOptions] = useState({
-        'lod': [],
-        'shading': ['flat','studio','sunset','rural road'],
-        'material': ['solid','albedo'],
-        'color': [],
-        'wireframe': ['true', 'false'],
-    });
-
-    function handleClick(data) {
-        outData(data);
-    };
-
-    let colorSelector = {
-        'param': 'color',
-        'title': 'COLOR',
-        'options': inData.colors,
-        'map': inData.colormap,
-        'flexbox': "selector-flex-dynamic",
-        'buttonwidth': "5.0rem",
-        'maxwidth': "10rem",
-    };
-    let lodSelector = {
-        'param': 'lod',
-        'title': 'LEVEL OF DETAIL',
-        'options': inData.lods,
-        'map': inData.lodmap,
-        'flexbox': "selector-flex-dynamic",
-        'buttonwidth': "5rem",
-        'maxwidth': "8rem",
-    };
-    let shaderSelector = {
-        'param': 'shading',
-        'title': 'SHADING',
-        'options': ['flat','studio','sunset','rural road'],
-        'default': 0,
-        'map': {'flat': 'FLAT', 'studio': 'STUDIO', 'sunset': 'SUNSET', 'rural road': 'RURAL ROAD'},
-        'flexbox': "selector-flex",
-        'buttonwidth': "8rem",
-        'maxwidth': "8rem",
-    };
-    let materialSelector = {
-        'param': 'material',
-        'title': 'MATERIAL',
-        'options': ['solid','albedo'],
-        'default': 0,
-        'map': {'solid': 'SOLID', 'albedo': 'ALBEDO'},
-        'flexbox': "selector-flex",
-        'buttonwidth': "6rem",
-        'maxwidth': "6rem",
-    };
-
-    let wireframeSelector = {
-        'param': 'wireframe',
-        'title': 'WIREFRAME',
-        'options': ['wireframe'],
-        'default': true,
-        'map' : {'wireframe': 'WIREFRAME'},
-        'outercontainer': "wireframe-selector-outer",
-        'innercontainer': "wireframe-selector-inner",
-    }
-    let optionsGlossary = {
-        'lod': inData.lods,
-        'shading': ['flat','shaded'],
-        'material': ['solid','albedo'],
-        'color': inData.colors,
-        'colormap': inData.colormap,
-    };
-    return (
-        <div className="dashboard-container-outer">
-            <div id="dashboard">
-                <ViewerOptionsContext.Provider value={optionsGlossary}>
-                    <div className="dashboard-fixed-container">
-                        <DashboardSelectorComponent inData={shaderSelector} outData={handleClick}/>
-                        <DashboardSelectorComponent inData={materialSelector} outData={handleClick}/>
-                    </div>
-                    <div className="dashboard-flex-container">
-                        <DashboardSelectorComponent inData={lodSelector} outData={handleClick}/>
-                        <DashboardSelectorComponent inData={colorSelector} outData={handleClick}/>
-                    </div>
-                    <SelectorToggleComponent inData={wireframeSelector} outData={handleClick}></SelectorToggleComponent>
-                </ViewerOptionsContext.Provider>
-            </div>
-
-        </div>
-    );
-
-}
-
-/*
-                    <div className="dashboard-fixed-container">
-                        <DashboardSelectorComponent inData={shaderSelector} outData={handleClick}/>
-                        <DashboardSelectorComponent inData={materialSelector} outData={handleClick}/>
-                    </div>
-                    <div className="dashboard-flex-container">
-                        <DashboardSelectorComponent inData={lodSelector} outData={handleClick}/>
-                        <DashboardSelectorComponent inData={colorSelector} outData={handleClick}/>
-                    </div>
-                    <SelectorToggleComponent inData={wireframeSelector} outData={handleClick}></SelectorToggleComponent>
-
-*/
-export function DashboardSelectorComponent({ inData, outData }) {
-    const view = useViewerStateContext();
-    const parameters = useViewerOptionsContext();
-
-    function handleSelect(value) {
-        console.log(value);
-        let viewConfig = {
-                          'lod': view.lod,
-                          'shading': view.shading,
-                          'material': view.material,
-                          'color': view.color,
-                          'wireframe': view.wireframe};
-        
-        switch (inData.param) {
-            case 'lod':
-                viewConfig['lod'] = value;
-                break;
-            case 'shading':
-                viewConfig['shading'] = value;
-                break;
-            case 'material':
-                // if selecting solid material, clear chosen color
-                viewConfig['material'] = value;
-                if (value == 'solid') {
-                    viewConfig['color'] = null;
-                } else if (value == 'albedo') {
-                    viewConfig['color'] = parameters['color'][0];
-                }
-                break;
-            case 'color':
-                // if selecting a color when material is solid, switch material to albedo
-                if (viewConfig['material'] == 'solid') {
-                    viewConfig['material'] = 'albedo';
-
-                }
-                viewConfig['color'] = value;
-                break;
-            case 'wireframe':
-                // repetitive but let's see if it works
-                viewConfig['wireframe'] = !viewConfig['wireframe'];
-                break;
-        }
-        outData(viewConfig);
-    }
-    let paramHeaderStyle = {
-        height: "1.2rem",
-        marginTop: "0rem",
-        marginBottom: "0rem",
-        marginLeft: "0.5rem",
-        fontSize: "0.85rem",
-        fontFamily: "Swiss721",
-        fontWeight: "300",
-        zIndex: "9",
-    }
-    return (
-        <>
-            <div id={inData.param+"-selector"}>
-                <p style={paramHeaderStyle}>{inData.title}</p>
-                <SelectorContext.Provider value={inData}>
-                    <div className={inData.flexbox}>
-                    {inData.options.map((option, i) => (
-                        <SelectorComponent key={option} inData={{'param': inData.param, 'option': option, 'i': i, 'minwidth': inData.buttonwidth, 'maxwidth': inData.maxwidth}} outData={handleSelect}></SelectorComponent>
-                    ))}
-                    </div>
-                </SelectorContext.Provider>
-            </div>
-        </>
-    );
-}
-
-export function SelectorToggleComponent({ inData, outData }) {
-    const view = useViewerStateContext()
-    const [checked, setChecked] = useState(true);
-
-    function handleChange() {
-        let viewConfig = {'lod': view.lod,
-                          'shading': view.shading,
-                          'material': view.material,
-                          'color': view.color,
-                          'wireframe': view.wireframe};
-        if (inData.param == "wireframe") {
-            viewConfig['wireframe'] = !viewConfig['wireframe'];
-        }
-        setChecked(!checked);
-        outData(viewConfig);
-    }
-    const paramStyle = {
-        color: "black",
-        fontSize: "0.85rem",
-        fontFamily: "Swiss721",
-        fontWeight: "300",
-    };
-    return (
-        <div className={inData.outercontainer}>
-            <div className={inData.innercontainer}>
-                <label className="toggle-switch">
-                    <input type="checkbox"
-                        checked={view[inData.param] == true ? (true) : (false)}
-                        onChange={() => handleChange()}/>
-                    <span className="slider"/>
-                </label>
-                <p style={paramStyle}>{inData.title}</p>
-            </div>
-        </div>
-    )
-}
-export function SelectorComponent({ inData, outData }) {
-    const view = useViewerStateContext();
-    const selector = useSelectorContext();
-
-    function handleClick() {
-        // set all other options as inactive
-        outData(inData.option);
-    };
-    const buttonStyle = {
-        minWidth: inData.minwidth,
-        maxWidth: inData.maxwidth,
-        boxShadow: view[inData.param] == inData.option ? ("rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset") : ("none"),
-        background: view[inData.param] == inData.option ? ("#E1E7A7") : ("transparent"),
-    };
-    const buttonEm = { 
-        color: "#7C4E00",
-    };
-    return (
-        <button className="selector-button" value={inData.option} style={buttonStyle} onClick={() => handleClick()}>
-            {view[inData.param] == inData.option && (
-                <p style={buttonEm}>{selector.map[inData.option].toUpperCase()}</p>
-            )}
-            {view[inData.param] != inData.option && (
-                <p>{selector.map[inData.option].toUpperCase()}</p>
-            )}
-        </button>
-    );
-}

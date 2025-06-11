@@ -7,7 +7,7 @@ import json
 import os
 import random
 import secrets
-from rogerlib.views.util import fetch_one_from_json, fetch_all_json, fetch_json_s3, fetch_categories, fetch_categories_json, fetch_presigned_url, fetch_quote_s3, fetch_markdown_s3, fetch_deets, fetch_changelog
+from rogerlib.views.util import fetch_one_from_json, fetch_all_json, fetch_json_s3, fetch_categories, fetch_categories_json, fetch_presigned_url, fetch_quote_s3, fetch_markdown_s3, fetch_deets, fetch_changelog, hydrate
 
 @app.route('/api/v1/cntct/', methods=['GET'])
 def get_cntct():
@@ -28,23 +28,18 @@ def get_cntct():
 @app.route('/api/v1/cntct/deets/', methods=['GET'])
 def get_deets():
     deets = fetch_deets()
-    print("hello")
     context = {
         'deets': deets
     }
     return flask.jsonify(**context)
 
-@app.route('/api/v1/images/items/all/', methods=['GET'])
-def get_all_item_images():
-    context = {}
-    return flask.jsonify(**context)
 
 @app.route('/api/v1/items/<itemcode>/', methods=['GET'])
 def get_item(itemcode):
     """Return item from itemcode"""
     ct = datetime.datetime.now()
 
-    model = fetch_json_s3(str.format("models/{0}/{0}.json"))
+    model = fetch_json_s3(str.format("models/json/{0}.json"))
     # model = fetch_one_from_json(itemcode.lower())
 
     context = {
@@ -52,6 +47,7 @@ def get_item(itemcode):
         'preview': model['preview'],
         'imagepath': model['imagepath'],
         'models': model['models'],
+        'zoom': model['zoom'],
         'texturemap': model['texturemap'],
         'texturesets': model['texturesets'],
         'itemcode': itemcode,

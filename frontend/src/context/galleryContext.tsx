@@ -1,6 +1,22 @@
 import { createContext, useContext } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
+import { Camera } from 'three';
 
+
+interface CameraContextType {
+    autoRotate: boolean;
+    speed: number;
+}
+
+
+export const CameraContext = createContext<CameraContextType | undefined>(undefined);
+export const useCameraContext = () => {
+    const context = useContext(CameraContext);
+    if (context === undefined) {
+        throw new Error('Camera Context not found.');
+    }
+    return context;
+}
 // ViewportContext: For light/dark mode AND mobile/desktop
 interface ViewType {
     darkMode: boolean;
@@ -78,6 +94,7 @@ export interface ItemType {
     imagepath: string;
     images: string[];
     models: string[]; // array where index corresponds to LOD
+    zoom: string;
     texturesets: TextureSetType[];
     texturemap: DictType;
     itemcode: string;

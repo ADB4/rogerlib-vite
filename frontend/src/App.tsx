@@ -64,7 +64,7 @@ export default function App() {
         maxHeight: "1560px",
         overflowY: "visible",
         overflowX: "visible",
-        borderRadius: compactView ? ("0rem 0rem 0rem 0rem") : ("0rem 0rem 1rem 1rem"),
+        borderRadius: compactView ? ("0rem 0rem 0rem 0rem") : ("0rem 0rem 1.5rem 1.5rem"),
         backgroundColor: darkMode ? colorScheme.backgroundColors[0] : colorScheme.backgroundColors[1],
         transition: "all .5s ease",
         WebkitTransition: "all .5s ease",
