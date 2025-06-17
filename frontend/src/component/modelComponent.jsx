@@ -2,11 +2,9 @@ import * as React from "react"
 import { useState, useEffect, useRef, useLayoutEffect, useMemo, useReducer } from "react";
 import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useCameraContext, useModelContext } from "../context/galleryContext";
 import { useDevice } from "../hooks/useDevice";
-import { useControls } from 'leva';
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import {
     Environment,
-    OrbitControls,
     OrthographicCamera,
     Html,
     useProgress,
@@ -53,20 +51,14 @@ export default function ModelViewerComponent(props) {
         color: "NULL",
         wireframe: true,
     });
-    const [viewGlossary, setViewGlossary] = useState({
-        lod: [],
-        shading: ['flat','studio','sunset','rural road'],
-        material: ['solid','albedo'],
-        color: [],
-        wireframe: ['true', 'false'],
-    });
     const [cameraContext, setCameraContext] = useState({
         autoRotate: true,
         speed: 1.0,
     });
     const compactView = useDevice();
-
     const cameraControlRef = useRef();
+
+
     const DEG45 = Math.PI / 4;
     const viewContainerStyle = {
         backgroundColor: darkMode ? "transparent":"white",
@@ -93,8 +85,6 @@ export default function ModelViewerComponent(props) {
     useEffect(() => {
         if (model !== null) {
             let lodString = "lod" + (model.lods.length - 1).toString();
-            let lodArr = model.lods.slice();
-            let colors = model.colors.slice();
             let texIndex = model.texturesets.length - 1;
             // determine which model(s) need to be loaded
             let modelArr = model.models[model.lods.length - 1].slice();
@@ -109,14 +99,6 @@ export default function ModelViewerComponent(props) {
                 color: 'NULL',
                 wireframe: true,
             };
-            const glossary = {
-                lod: lodArr,
-                shading: ['flat','studio','sunset','rural road'],
-                material: ['solid','albedo'],
-                color: colors,
-                wireframe: ['true', 'false'],
-            };
-            setViewGlossary(glossary);
             dispatch({type: 'update', data: initialstate});
         }
     }, []);
@@ -132,7 +114,7 @@ export default function ModelViewerComponent(props) {
                             ROTATE THETA 45DEG
                 </button>
                 <button className="model-view-reset-button"
-                        onClick={() => {cameraControlRef.current?.reset(true)}}>
+                        onClick={() => {cameraControlRef.current?.setPosition(200,90,200, true)}}>
                             RESET VIEW
                 </button>
                 </>
@@ -442,18 +424,6 @@ export function ViewerDashboardComponent({ outData }) {
 
 }
 
-/*
-                    <div className="dashboard-fixed-container">
-                        <DashboardSelectorComponent inData={shaderSelector} outData={handleClick}/>
-                        <DashboardSelectorComponent inData={materialSelector} outData={handleClick}/>
-                    </div>
-                    <div className="dashboard-flex-container">
-                        <DashboardSelectorComponent inData={lodSelector} outData={handleClick}/>
-                        <DashboardSelectorComponent inData={colorSelector} outData={handleClick}/>
-                    </div>
-                    <SelectorToggleComponent inData={wireframeSelector} outData={handleClick}></SelectorToggleComponent>
-
-*/
 export function DashboardSelectorComponent({ inData, outData }) {
     const view = useViewerStateContext();
     const parameters = useViewerOptionsContext();
