@@ -25,6 +25,7 @@ export default function GalleryComponent({ outData }) {
     function delay(ms: number) {
         return new Promise(res => setTimeout(res, ms));
     }
+
     async function openDetailView(data) {
         let detailViewVar: DetailViewType = {
             item: null,
@@ -133,26 +134,7 @@ export default function GalleryComponent({ outData }) {
         const inData = {
             item: detailViewConfig.item,
         };
-        const textColor = {
-            color: darkMode ? "white":"black",
-            transition: "all .5s ease",
-            WebKitTransition: "all .5s ease",
-            MozTransition: "all .5s ease",
-        };
-        const navcontainer = {
-            backgroundColor: darkMode ? "#E5FFFE":"#E5FFFE",
-            width: informationToggle ? "100%":"14rem",
-            height: informationToggle ? "100%":"3rem",
-        };
-        const libInfoContainer = {
-            color: darkMode ? "#3b6f88":"#3b6f88",
-        };
-        const libInfoExternal = {
-            color: darkMode ? "white":"white",
-        };
-        const markdowninfo = {
-            color: darkMode ? "#3b6f88":"#3b6f88",
-        };
+
         return (
             <>
             <div id="model-gallery-container-outer">
@@ -162,7 +144,10 @@ export default function GalleryComponent({ outData }) {
                 <FilterComponent outData={handleFilterResults}/>
                 <LibraryListComponent inData={{selection: selection, items: items}} outData={openDetailView}/>
                 {detailViewConfig.toggle && (
-                            <DetailContainerComponent inData={inData} outData={closeDetailView}></DetailContainerComponent>
+                        <ModelContext.Provider value={detailViewConfig.item}>
+                            <DetailContainerComponent outData={closeDetailView}></DetailContainerComponent>
+                        </ModelContext.Provider>
+
                 )}
             </div>
             </>
@@ -184,13 +169,13 @@ export function LibraryListComponent({ inData, outData }) {
             <div id="model-gallery-list">
                 <div id="model-gallery-flex">
                 {inData.selection.map((model: ItemType, i: number) => (
-                    <ModelContext.Provider key={model.itemcode} value={{model}}>
+                    <ModelContext.Provider key={model.itemcode} value={model}>
                         <LibraryItemComponent key={model.itemcode} outData={outData}>
                         </LibraryItemComponent>
                     </ModelContext.Provider>
                 ))}
                 {inData.items.map((model: ItemType, i: number) => (
-                    <ModelContext.Provider key={model.itemcode} value={{model}}>
+                    <ModelContext.Provider key={model.itemcode} value={model}>
                         <GhostItemComponent key={model.itemcode} outData={outData}>
                         </GhostItemComponent>
                     </ModelContext.Provider>
@@ -213,15 +198,15 @@ export function LibraryListComponent({ inData, outData }) {
 export function LibraryItemComponent({ outData }) {
     const modelcontext = useModelContext();
 
-    let galleryItemStyle = {
+    const galleryItemStyle = {
         height: "20rem",
         width: "20rem",
         cursor: "pointer",
         zIndex: "2",
     };
     return (
-        <div role="tablist" tabIndex={0} className="item" style={galleryItemStyle} onClick={() => {outData(modelcontext.model)}}>
-            <img src={modelcontext.model.preview} alt={modelcontext.model.itemname+" preview image"}  loading="lazy"/>
+        <div role="tablist" tabIndex={0} className="item" style={galleryItemStyle} onClick={() => {outData(modelcontext)}}>
+            <img src={modelcontext.preview} alt={modelcontext.itemname+" preview image"}  loading="lazy"/>
         </div>
     )
 }
@@ -229,7 +214,7 @@ export function LibraryItemComponent({ outData }) {
 export function GhostItemComponent({ outData }) {
     const modelcontext = useModelContext();
 
-    let galleryItemStyle = {
+    const galleryItemStyle = {
         height: "20rem",
         width: "20rem",
         cursor: "pointer",
@@ -237,8 +222,8 @@ export function GhostItemComponent({ outData }) {
         opacity: "25%",
     };
     return (
-        <div className="item" style={galleryItemStyle} onClick={() => {outData(modelcontext.model)}}>
-            <img src={modelcontext.model.preview} alt={modelcontext.model.itemname+" preview image"} loading="lazy"/>
+        <div className="item" style={galleryItemStyle} onClick={() => {outData(modelcontext)}}>
+            <img src={modelcontext.preview} alt={modelcontext.itemname+" preview image"} loading="lazy"/>
         </div>
     )
 }

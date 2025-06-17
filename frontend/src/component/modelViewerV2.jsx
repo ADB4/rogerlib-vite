@@ -4,18 +4,6 @@ import { ViewerStateContext, useViewerStateContext, useSelectorContext, Selector
 import ModelComponent from "../component/modelComponent";
 import { useDevice } from "../hooks/useDevice";
 
-import { Canvas, useLoader, useFrame } from "@react-three/fiber";
-import {
-    Environment,
-    OrbitControls,
-    Html,
-    useProgress
-    } from "@react-three/drei";
-import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import * as THREE from 'three';
-import { Suspense } from "react";
-
 /* 
 ModelViewerComponent
 Takes input: {item}
@@ -39,10 +27,8 @@ export default function ModelViewerV2Component({ inData, outData }) {
         color: [],
         wireframe: ['true', 'false'],
     });
-    const compactView = useDevice();
 
-    // 3D MANIPULATION
-    const modelRef = useRef();
+
     function handleConfigUpdate(data) {
         // construct new active image url
         const item = inData.item;
@@ -99,7 +85,7 @@ export default function ModelViewerV2Component({ inData, outData }) {
     return (
         <>  
             <ViewerStateContext.Provider value={viewState}>
-                <ModelComponent zoom={inData.item.zoom} models={activeModels} textures={activeTextureSet} itemcode={activeItem} item={inData.item} updateconfig={handleConfigUpdate} />
+                <ModelComponent zoom={inData.item.zoom} models={activeModels} textures={activeTextureSet}  item={activeItem} updateconfig={handleConfigUpdate} />
             </ViewerStateContext.Provider>
         </>
     )

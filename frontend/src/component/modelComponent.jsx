@@ -1,6 +1,6 @@
 import * as React from "react"
-import { useState, useEffect, useRef, useLayoutEffect, useMemo } from "react";
-import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useCameraContext } from "../context/galleryContext";
+import { useState, useEffect, useRef, useLayoutEffect, useMemo, useReducer } from "react";
+import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useCameraContext, useModelContext } from "../context/galleryContext";
 import { useDevice } from "../hooks/useDevice";
 import { useControls } from 'leva';
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
@@ -33,55 +33,99 @@ function Loader() {
     return <Html center>{progress} % loaded</Html>;
 }
 
-export default function ModelComponent(props) {
+function reducer(state, action) {
+    switch (action.type) {
+        case 'update':
+            return {...action.data}
+        default:
+            return state
+    }
+}
+export default function ModelViewerComponent(props) {
+    const model = useModelContext();
     const { darkMode, setDarkMode } = useColorModeContext();
-    const view = useViewerStateContext();
-    const [viewState, setViewState] = useState({
-        itemcode: "NULL",
+    const [activeModels, setActiveModels] = useState([]);
+    const [activeTextureSet, setActiveTextureSet] = useState([]);
+    const [viewState, dispatch] = useReducer(reducer, {
         lod: "NULL",
         shading: "NULL",
         material: "NULL",
         color: "NULL",
         wireframe: true,
     });
+    const [viewGlossary, setViewGlossary] = useState({
+        lod: [],
+        shading: ['flat','studio','sunset','rural road'],
+        material: ['solid','albedo'],
+        color: [],
+        wireframe: ['true', 'false'],
+    });
     const [cameraContext, setCameraContext] = useState({
         autoRotate: true,
         speed: 1.0,
     });
     const compactView = useDevice();
-    const orbitRef = useRef();
 
     const cameraControlRef = useRef();
-
     const DEG45 = Math.PI / 4;
     const viewContainerStyle = {
         backgroundColor: darkMode ? "transparent":"white",
     };
-    const viewButton = {
-        
-    }
-    function toggleAutoRotate() {
-        let newContext = {
-            autoRotate: !cameraContext.autoRotate,
-            speed: cameraContext.speed,
-        };
 
-        setCameraContext(newContext);
+    function handleConfigUpdate(data) {
+        // construct new active image url
+        
+        // if LOD has changed, load new model set/textures if necessary
+        if (data.lod != viewState.lod) {
+            let index = parseInt(data.lod[3]);
+            let modelArr = model.models[index].slice();
+            // check if LOD uses different texture set
+            if (model.texturemap[viewState.lod] != model.texturemap[data.lod]) {
+                let texIndex = parseInt(model.texturemap[data.lod]);
+                let textureArr = model.texturesets[texIndex].slice();
+                setActiveTextureSet(textureArr);
+            }
+            setActiveModels(modelArr);
+        }
+        dispatch({type: 'update', data: data});
     }
+
     useEffect(() => {
-        console.log(props.zoom);
-    },[])
+        if (model !== null) {
+            let lodString = "lod" + (model.lods.length - 1).toString();
+            let lodArr = model.lods.slice();
+            let colors = model.colors.slice();
+            let texIndex = model.texturesets.length - 1;
+            // determine which model(s) need to be loaded
+            let modelArr = model.models[model.lods.length - 1].slice();
+            let textureArr = model.texturesets[texIndex].slice();
+            setActiveModels(modelArr);
+            setActiveTextureSet(textureArr);
+            // set default view
+            const initialstate = {
+                lod: lodString,
+                shading: 'studio',
+                material: 'solid',
+                color: 'NULL',
+                wireframe: true,
+            };
+            const glossary = {
+                lod: lodArr,
+                shading: ['flat','studio','sunset','rural road'],
+                material: ['solid','albedo'],
+                color: colors,
+                wireframe: ['true', 'false'],
+            };
+            setViewGlossary(glossary);
+            dispatch({type: 'update', data: initialstate});
+        }
+    }, []);
+
     return (
         <>
-            <ViewerDashboardComponent inData={props.item} outData={props.updateconfig}/>
+        <ViewerStateContext.Provider value={viewState}>
+            <ViewerDashboardComponent outData={handleConfigUpdate}/>
             <div className="model-view-controller">
-                {compactView && (
-                <button className="model-view-toggle-autorotate"
-                        onClick={() => toggleAutoRotate()}>
-                            TOGGLE AUTOROTATE
-                </button>
-                )}
-                {!compactView && (
                 <>
                 <button className="model-view-rotate-button"
                         onClick={() => {cameraControlRef.current?.rotate(DEG45, 0, true)}}>
@@ -92,23 +136,25 @@ export default function ModelComponent(props) {
                             RESET VIEW
                 </button>
                 </>
-                )}
             </div>
             <div className="model-view-module" style={viewContainerStyle}>
+            {model && (
                 <Canvas>
                 <Suspense fallback={<Loader />}>
-
-                        <GLTFComponent models={props.models} textures={props.textures} itemcode={props.itemcode}/>
+                        <GLTFComponent models={activeModels} textures={activeTextureSet} itemcode={model.itemcode}/>
                         <LightingComponent />
                         <group>
                         <CameraContext.Provider value={cameraContext} >
-                            <RotatingCamera distance={100} speed={0.01} zoom={props.zoom} camControls={cameraControlRef}/>
+                            <RotatingCamera distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
                         </CameraContext.Provider>
                         </group>
 
                 </Suspense>
                 </Canvas>
+            )}
+
             </div>
+        </ViewerStateContext.Provider>
         </> 
     )
 }
@@ -198,11 +244,12 @@ models: string[]
 */
 export function GLTFComponent(props) {
     const view = useViewerStateContext();
+    const item = useModelContext();
 
     return (
         <group {...props} dispose={null}>
             {props.models.map((model, i) => (
-                <GLTFLoaderComponent key={model} itemcode={props.itemcode} textures={props.textures[i]} filename={model}/>
+                <GLTFLoaderComponent key={model} itemcode={item.itemcode} textures={props.textures[i]} filename={model}/>
             ))}
         </group>
     )
@@ -214,8 +261,9 @@ itemcode: string
 filename: string
 */
 export function GLTFLoaderComponent(props) {
+    const item = useModelContext();
     const view = useViewerStateContext();
-    const { nodes, materials } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/gltf/${props.filename}`);
+    const { nodes, materials } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/gltf/${props.filename}`);
     const meshRef = useRef();
 
     // materials
@@ -238,7 +286,7 @@ export function GLTFLoaderComponent(props) {
         )}
         {view.material == "albedo" && (
             <mesh ref={meshRef} geometry={geo}>
-                <TextureLoaderComponent textures={props.textures} itemcode={props.itemcode}/>
+                <TextureLoaderComponent textures={props.textures} itemcode={item.itemcode}/>
             </mesh>
         )}
         </>
@@ -253,13 +301,14 @@ alpha: boolean
 displacement: boolean
 */
 export function TextureLoaderComponent(props) {
+    const item = useModelContext();
     const view = useViewerStateContext();
     // TODO: in default state, view.color is NULL
     const [colorMap, normalMap, roughnessMap, metalnessMap] = useLoader(THREE.TextureLoader, [
-        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/tex/${props.textures.id}_color_${view.color}.jpg`,
-        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/tex/${props.textures.id}_normal.jpg`,
-        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/tex/${props.textures.id}_roughness.jpg`,
-        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${props.itemcode}/tex/${props.textures.id}_metallic.jpg`
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_color_${view.color}.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_normal.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_roughness.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_metallic.jpg`
       ]);
     colorMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = false;
     return (
@@ -300,7 +349,8 @@ export function LightingComponent() {
 /*
 <DetailParametersComponent inData={inData.item} outData={handleConfigUpdate}/>
 */
-export function ViewerDashboardComponent({ inData, outData }) {
+export function ViewerDashboardComponent({ outData }) {
+    const item = useModelContext();
     const [viewOptions, setViewOptions] = useState({
         'lod': [],
         'shading': ['flat','studio','sunset','rural road'],
@@ -308,6 +358,7 @@ export function ViewerDashboardComponent({ inData, outData }) {
         'color': [],
         'wireframe': ['true', 'false'],
     });
+    const compactView = useDevice();
 
     function handleClick(data) {
         outData(data);
@@ -316,8 +367,8 @@ export function ViewerDashboardComponent({ inData, outData }) {
     let colorSelector = {
         'param': 'color',
         'title': 'COLOR',
-        'options': inData.colors,
-        'map': inData.colormap,
+        'options': item.colors,
+        'map': item.colormap,
         'flexbox': "selector-flex-dynamic",
         'buttonwidth': "5.0rem",
         'maxwidth': "10rem",
@@ -325,8 +376,8 @@ export function ViewerDashboardComponent({ inData, outData }) {
     let lodSelector = {
         'param': 'lod',
         'title': 'LEVEL OF DETAIL',
-        'options': inData.lods,
-        'map': inData.lodmap,
+        'options': item.lods,
+        'map': item.lodmap,
         'flexbox': "selector-flex-dynamic",
         'buttonwidth': "5rem",
         'maxwidth': "8rem",
@@ -338,8 +389,8 @@ export function ViewerDashboardComponent({ inData, outData }) {
         'default': 0,
         'map': {'flat': 'FLAT', 'studio': 'STUDIO', 'sunset': 'SUNSET', 'rural road': 'RURAL ROAD'},
         'flexbox': "selector-flex",
-        'buttonwidth': "8rem",
-        'maxwidth': "8rem",
+        'buttonwidth': "7rem",
+        'maxwidth': "10rem",
     };
     let materialSelector = {
         'param': 'material',
@@ -362,18 +413,20 @@ export function ViewerDashboardComponent({ inData, outData }) {
         'innercontainer': "wireframe-selector-inner",
     }
     let optionsGlossary = {
-        'lod': inData.lods,
+        'lod': item.lods,
         'shading': ['flat','shaded'],
         'material': ['solid','albedo'],
-        'color': inData.colors,
-        'colormap': inData.colormap,
+        'color': item.colors,
+        'colormap': item.colormap,
     };
     return (
         <div className="dashboard-container-outer">
             <div id="dashboard">
                 <ViewerOptionsContext.Provider value={optionsGlossary}>
                     <div className="dashboard-fixed-container">
+                        {!compactView && (
                         <DashboardSelectorComponent inData={shaderSelector} outData={handleClick}/>
+                        )}
                         <DashboardSelectorComponent inData={materialSelector} outData={handleClick}/>
                     </div>
                     <div className="dashboard-flex-container">

@@ -115,7 +115,7 @@ export interface ItemType {
 export interface ModelContextType {
     model: ItemType;
 }
-export const ModelContext = createContext<ModelContextType | undefined>(undefined);
+export const ModelContext = createContext<ItemType | undefined>(undefined);
 export const useModelContext = () => {
     const context = useContext(ModelContext);
     if (context === undefined) {
@@ -129,7 +129,6 @@ export const GalleryContext = createContext({'resolutionX': null, 'resolutionY':
 
 export interface DetailContextType {
     item: ItemType;
-    imageresolution: number;
 }
 export const DetailContext = createContext<DetailContextType | undefined>(undefined);
 export const useDetailContext = () => {

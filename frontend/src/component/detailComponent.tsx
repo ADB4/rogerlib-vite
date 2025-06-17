@@ -1,15 +1,16 @@
 import * as React from "react"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // import ModelViewerComponent from "./modelViewer";
-import { DetailContext, useColorModeContext} from "../context/galleryContext";
+import { DetailContext, useColorModeContext, useModelContext } from "../context/galleryContext";
+import type { ItemType } from "../context/galleryContext";
 import { useDevice } from "../hooks/useDevice";
 import { compactDescriptionHeader, compactExitButton } from "../style/modelDetailStyles";
-import ModelViewerV2Component from "./modelViewerV2";
-import DetailDescriptionComponent from "../component/detailDescriptionComponent";
+import ModelViewerComponent from "./modelComponent";
 import DownloadComponent from "../component/downloadComponent";
 
-export default function DetailContainerComponent({ inData, outData }) {
+export default function DetailContainerComponent({ outData }) {
+    const model = useModelContext();
     const compactView = useDevice();
     const { darkMode, setDarkMode } = useColorModeContext();
     const [toggleView, setToggleView] = useState(true);
@@ -21,38 +22,13 @@ export default function DetailContainerComponent({ inData, outData }) {
         setToggleView(!toggleView);
     }
     let exitButtonStyle = {};
-
-    let baseResolution = 320;
-    let tilesX: number = 3;
-    let tilesY: number = 3;
-    let scaledResolution: number = baseResolution;
-    let detailContainerHeight: number = baseResolution;
-    let detailContainerWidth: number = baseResolution;
-        // standard desktop view
-    scaledResolution = 320 * 1.5;
-    detailContainerWidth = scaledResolution * 2;
     
-    let detailOuterContainer = {};
-    let detailLeft: React.CSSProperties = {};
-    let detailRight: React.CSSProperties = {};
     let detailToggle: React.CSSProperties = {};
     let detailToggleDark: React.CSSProperties = {};
     let detailToggleText: React.CSSProperties = {};
     // height is image resolution + height of view dashboard (8rem) + height of item header (6rem)
-    detailContainerHeight = scaledResolution + 128;
     // mobile view
     if (compactView == true) {
-        scaledResolution = 256;
-        let imageresolution = "85vw";
-        let containerheight = "calc(85vw + 14.5rem";
-        detailContainerHeight = scaledResolution + 192;
-        // left container for model viewer
-        detailLeft = {
-            minWidth: scaledResolution+"px",
-        };
-        detailRight = {
-            minWidth: scaledResolution+"px",
-        };
         detailToggle = {
             backgroundColor: toggleView ? ("#E5FFFE") : ("#F9FFC7"),
         };
@@ -63,16 +39,7 @@ export default function DetailContainerComponent({ inData, outData }) {
         detailToggleText = {
             color: toggleView ? ("#3B6F88") : ("#7C4E00"),
         };
-    } else {
-        scaledResolution = 512;
-        detailContainerHeight = scaledResolution + 192;
-        // left container for model viewer
     }
-    let descriptionWhitespace = {
-        height: compactView ? ("4rem") : ("3rem"),
-        width: "100%",
-        borderRadius: "0.75rem",
-    };
     exitButtonStyle = compactExitButton;
     const textColor: React.CSSProperties = {
         color: darkMode? "#3B6F88":"black",
@@ -91,58 +58,178 @@ export default function DetailContainerComponent({ inData, outData }) {
     const exitButtonText: React.CSSProperties = {
         color: darkMode? "black":"white",
     };
+    
     return (
-        <div style={modelDetailContainer} id={compactView ? ("model-detail-container-compact"):("model-detail-standard-outer")}>
+        <div style={modelDetailContainer} id={compactView ? ("model-detail-compact-outer"):("model-detail-standard-outer")}>
             <div className="exit-button-container" style={exitButtonContainer}>
                 <div className="exit-button" style={exitButtonStyle} onClick={() => {handleClose()}}>
                         <p style={exitButtonText}>CLOSE</p>
                 </div>
             </div>
             <div className="model-detail-standard-inner">
-            <DetailContext.Provider value={{'item': inData.item, 'imageresolution': scaledResolution}}>
+            {compactView && (
+                <div id="model-detail-compact-left">
+                    <DetailHeaderComponent/>
+                    <DetailDescriptionComponent/>
+                </div>
+            )}
             {!compactView && (
                 <>
                     <div id="model-detail-standard-left">
-                        <ModelViewerV2Component inData={{item: inData.item, imageresolution: scaledResolution}} outData={handleToggleView}/>
+                        <ModelViewerComponent/>
                     </div>
                     <div id="model-detail-standard-right">
-                        <DetailHeaderComponent inData={{'item': inData.item }}/>
-                        <DetailDescriptionComponent inData={{'item': inData.item,
-                                                            'imageresolution': scaledResolution,
-                                                            'containerheight': detailContainerHeight,
-                                                            'style': compactDescriptionHeader}}/>
-
-
+                        <DetailHeaderComponent/>
+                        <DetailDescriptionComponent/>
                     </div>
                 </>
             )}
-            </DetailContext.Provider>
             </div>
         </div>
     )
 }
-/*
-                        <div className="model-detail-actions">
-                            <div className="description-download-container">
-                                <DownloadComponent inData={{'item': inData.item}}/>
-                            </div>
-                        </div>
-*/
 
-export function DetailHeaderComponent({ inData }) {    
+export function DetailHeaderComponent(props) {
+    const compactView = useDevice();
+    const model = useModelContext();
+    const HeaderText: React.CSSProperties = {
+        fontSize: compactView? "1.25rem":"1.75rem",
+    };
     return (
         <div id="description-header">
-                <h2>{inData.item.itemname.toUpperCase()}</h2>
+                <h2 style={HeaderText}>{model.itemname.toUpperCase()}</h2>
                 <ul>
-                    <li>VERSION {inData.item.version}</li>
-                    <li>{inData.item.category.toUpperCase()} / {inData.item.subcategory.toUpperCase()}</li>
+                    <li>VERSION {model.version}</li>
+                    <li>{model.category.toUpperCase()} / {model.subcategory.toUpperCase()}</li>
                 </ul>
         </div>
     )
 }
-/*
-                        <DetailDescriptionComponent inData={{'item': inData.item,
-                                                            'imageresolution': scaledResolution,
-                                                            'containerheight': detailContainerHeight,
-                                                            'style': compactDescriptionHeader}}/>
-*/
+
+interface ContentType {
+    [key: string]: string;
+}
+export function DetailDescriptionComponent(props) {
+    const model = useModelContext();
+    const { darkMode, setDarkMode } = useColorModeContext();
+    const [content, setContent] = useState<ContentType>({
+        'header': '',
+        'description': '',
+        'material': '',
+        'colors': '',
+        'colorString': '',
+        'lod': '',
+        'tools': 'Modeled and textured in Blender 3.3 and Adobe 3D Substance Painter 2024.',
+        'credits': 'Base maps by TCOM.',
+        'license': 'This work is licensed under CC BY-NC 4.0',
+        'downloadnotice': 'Downloads are fed from US-East S3 bucket. Always scan files that you download from the internet for viruses, malware, or other malicious software. ',
+    });
+    const compactView = useDevice();
+
+    useEffect(() => {
+        let ignoreStaleRequest = false;
+        let currentItem: ItemType = model;
+        const itemCategory = currentItem.category;
+        const itemSubcategory = currentItem.subcategory;
+
+        let colorString = "Available in ";
+        let i = 0;
+        for (;i < currentItem.colors.length;) {
+            let color = currentItem.colors[i];
+            let formattedString = currentItem.colormap[color];
+            // if last element, no comma
+            if (i == (currentItem.colors.length - 1)) {
+                colorString = colorString.concat(formattedString);
+            } else {
+                colorString = colorString.concat(formattedString+', ');
+            }
+            i = i+1;
+        }
+        let currentContent: ContentType = {
+            'header': content.header,
+            'description': content.description,
+            'material': content.material,
+            'colors': content.colors,
+            'colorString': colorString.toUpperCase(),
+            'lod': content.lod,
+            'tools': content.tools,
+            'credits': content.credits,
+            'license': content.license,
+            'downloadnotice': content.downloadnotice,
+        };
+        setContent(currentContent);
+        return () => {
+            ignoreStaleRequest = true;
+        };
+    }, [])
+
+    let descriptionContentContainer: React.CSSProperties = {
+        gridColumnStart: "1",
+        gridColumnEnd: "-1",
+        gridRowStart: "2",
+        gridRowEnd: "-1",
+        overflowY: "scroll",
+        overflowX: "hidden",
+        width: "auto",
+        minHeight: "4rem",
+        height: compactView ? ("100%"):("100%"),
+        maxHeight: compactView ? ("100%"):("100%"),
+        margin: "auto",
+        marginTop: "0rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "left",
+    };
+    let descriptionSerif: React.CSSProperties = {
+        fontFamily: "Swiss721",
+        fontWeight: "200",
+        fontSize: "1.0rem",
+        margin: "1rem 2rem 1rem",
+    };
+    let lods = model.lods;
+    const outline = {
+        outline: darkMode ? "1px solid black":"1px solid black",
+    };
+    return (
+        <>
+            <div id="description-content" style={descriptionContentContainer}>
+                <div id="description-block-A">
+                    <p style={descriptionSerif}>{model.description}</p>
+                    <p style={descriptionSerif}>{model.creatornote}</p>
+                </div>
+                <div id="description-block-B">
+                    <p id="description-material-left">{model.material.toUpperCase()}</p>
+                    <p id="description-material-right">{content.colorString}</p>
+                </div>
+                <div id="description-lod-container" style={outline}>
+                    <div id="description-lod-header">
+                            <p>LEVEL OF DETAIL</p>
+                    </div>
+                    <div id="description-lods-left">
+                        <ul>
+                            {lods.map((lod, i) => (
+                                <li key={lod}>LOD{i}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div id="description-lods-right">
+                        <ul id="description-lods-right">
+                            {lods.map((lod, j) => (
+                                <li key={lod}>{model.polycount[lod]}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div id="description-lod-footer">
+                        <p>TRIANGLES</p>
+                    </div>
+                </div>
+                <div id="description-credits-container">
+                    <p>{content.tools.toUpperCase()}</p>
+                    <p>{content.credits.toUpperCase()}</p>
+                    <p>{content.license.toUpperCase()}</p>
+                    <p>{content.downloadnotice.toUpperCase()}</p>
+                </div>
+            </div>
+        </>
+    )
+}
