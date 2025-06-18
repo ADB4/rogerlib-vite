@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState, useEffect, useRef, useLayoutEffect, useMemo, useReducer } from "react";
-import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useCameraContext, useModelContext } from "../context/galleryContext";
+import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useCameraContext, useModelContext, useDeviceContext } from "../context/galleryContext";
 import { useDevice } from "../hooks/useDevice";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import {
@@ -59,7 +59,7 @@ export default function ModelViewerComponent(props) {
         autoRotate: true,
         speed: 1.0,
     });
-    const compactView = useDevice();
+    const compactView = useDeviceContext();
     const cameraControlRef = useRef();
 
 
@@ -456,7 +456,7 @@ export function ViewerDashboardComponent({ outData }) {
         'color': [],
         'wireframe': ['true', 'false'],
     });
-    const compactView = useDevice();
+    const compactView = useDeviceContext();
 
     function handleClick(data) {
         outData(data);

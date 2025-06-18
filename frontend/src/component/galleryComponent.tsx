@@ -20,7 +20,6 @@ export default function GalleryComponent({ outData }) {
         toggle: false
     });
     const { darkMode, setDarkMode } = useColorModeContext();
-    const compactView = useDevice();
 
     function delay(ms: number) {
         return new Promise(res => setTimeout(res, ms));

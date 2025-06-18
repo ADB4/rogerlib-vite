@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState, useLayoutEffect} from 'react';
 import Markdown from 'react-markdown';
-import { useColorModeContext } from '../context/galleryContext';
+import { useColorModeContext, useDeviceContext } from '../context/galleryContext';
 import { Link } from "react-router";
 import { useDevice } from '../hooks/useDevice';
 
@@ -24,7 +24,7 @@ export default function CntctComponent({ outData }) {
     });
     const [footer, setFooter] = useState<string>("#### Hello, and thank you for visiting! Since the library launched at the beginning of the year, the main priority has been building out internal tooling to facilitate the various processes needed to catalogue new models, including automated product photography to ensure each model is compatible with the 3D model viewer.  \n#### In the mean time, please feel free to reach out to the appropriate email below for any inquiries related to Roger Motorsports Library.");
     const { darkMode, setDarkMode } = useColorModeContext();
-    const compactView = useDevice();
+    const compactView = useDeviceContext();
 
     function handleCopyToClipboard(text) {
         let copiedState: CopiedType = {

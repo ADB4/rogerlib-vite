@@ -64,6 +64,15 @@ export const useViewerOptionsContext = () => {
     }
     return context;
 }
+// DeviceContext: for mobile/desktop viewports
+export const DeviceContext = createContext< boolean | undefined>(undefined);
+export const useDeviceContext = () => {
+    const context = useContext(DeviceContext);
+    if (context === undefined) {
+        throw new Error('Device context not found.');
+    }
+    return context;
+};
 // ColorModeContext: For light/dark mode
 export interface ColorModeContextType {
     darkMode: boolean;

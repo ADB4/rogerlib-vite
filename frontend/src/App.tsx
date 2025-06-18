@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState, useLayoutEffect} from 'react';
 import GalleryComponent from "./component/galleryComponent";
-import { ColorModeContext } from './context/galleryContext';
+import { ColorModeContext, DeviceContext } from './context/galleryContext';
 import { BrowserRouter, Routes, Route, Link } from "react-router";
 import { useDevice } from './hooks/useDevice';
 import HomeComponent from './component/homeComponent';
@@ -109,6 +109,7 @@ export default function App() {
     return (
         <div className="root-container" 
              style={rootContainerStyle}>
+            <DeviceContext.Provider value={compactView}>
             <ColorModeContext.Provider value={{ darkMode, setDarkMode }}>
             <BrowserRouter>
                 <header>
@@ -174,6 +175,7 @@ export default function App() {
                 </Routes>
             </BrowserRouter>
             </ColorModeContext.Provider>
+            </DeviceContext.Provider>
             </div>
         );
 }

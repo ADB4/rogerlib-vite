@@ -2,7 +2,7 @@ import * as React from "react"
 import { useState, useEffect } from "react";
 
 // import ModelViewerComponent from "./modelViewer";
-import { DetailContext, useColorModeContext, useModelContext } from "../context/galleryContext";
+import { DetailContext, useColorModeContext, useModelContext, useDeviceContext } from "../context/galleryContext";
 import type { ItemType } from "../context/galleryContext";
 import { useDevice } from "../hooks/useDevice";
 import { compactDescriptionHeader, compactExitButton } from "../style/modelDetailStyles";
@@ -11,7 +11,7 @@ import DownloadComponent from "../component/downloadComponent";
 
 export default function DetailContainerComponent({ outData }) {
     const model = useModelContext();
-    const compactView = useDevice();
+    const compactView = useDeviceContext();
     const { darkMode, setDarkMode } = useColorModeContext();
     const [toggleView, setToggleView] = useState(true);
 
