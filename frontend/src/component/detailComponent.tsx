@@ -23,23 +23,8 @@ export default function DetailContainerComponent({ outData }) {
     }
     let exitButtonStyle = {};
     
-    let detailToggle: React.CSSProperties = {};
-    let detailToggleDark: React.CSSProperties = {};
-    let detailToggleText: React.CSSProperties = {};
     // height is image resolution + height of view dashboard (8rem) + height of item header (6rem)
     // mobile view
-    if (compactView == true) {
-        detailToggle = {
-            backgroundColor: toggleView ? ("#E5FFFE") : ("#F9FFC7"),
-        };
-        detailToggleDark = {
-            border: "none",
-            backgroundColor: toggleView ? ("#CBE3E2") : ("#E1E7A7"),
-        };
-        detailToggleText = {
-            color: toggleView ? ("#3B6F88") : ("#7C4E00"),
-        };
-    }
     exitButtonStyle = compactExitButton;
     const textColor: React.CSSProperties = {
         color: darkMode? "#3B6F88":"black",
@@ -48,7 +33,7 @@ export default function DetailContainerComponent({ outData }) {
     const modelDetailContainer: React.CSSProperties = {
         color: darkMode ? "#dedede":"black",
         backgroundColor: darkMode ? "#1f1f1f":"white",
-        outline: darkMode ? "2px solid #1f1f1f":"2px solid #c6c6c6",
+        outline: darkMode ? "2px solid #474747":"2px solid #c6c6c6",
     };
 
     const exitButtonContainer: React.CSSProperties = {
@@ -56,24 +41,56 @@ export default function DetailContainerComponent({ outData }) {
         outline: darkMode? "1px solid #292929":"1px solid #bdbdbd",
     };
     const exitButtonText: React.CSSProperties = {
-        color: darkMode? "black":"white",
+        color: darkMode? "white":"white",
     };
-    
+    const detailToggle: React.CSSProperties = {
+        backgroundColor: toggleView ? ("#E5FFFE") : ("#F9FFC7"),
+    };
+    const detailToggleDark: React.CSSProperties = {
+        border: "none",
+        backgroundColor: toggleView ? ("#CBE3E2") : ("#E1E7A7"),
+    };
+    const detailToggleText: React.CSSProperties = {
+        color: toggleView ? ("#3B6F88") : ("#7C4E00"),
+    };
     return (
-        <div style={modelDetailContainer} id={compactView ? ("model-detail-compact-outer"):("model-detail-standard-outer")}>
+        <>
+        {compactView && (
+        <div style={modelDetailContainer} id="model-detail-compact-outer">
+            <div className="exit-button-container" style={exitButtonContainer}>
+                <div className="exit-button" style={exitButtonStyle} onClick={() => {handleClose()}}>
+                        <p style={exitButtonText}>CLOSE</p>
+                </div>
+            </div>
+            {toggleView && (
+                    <div id="model-detail-compact-left">
+                        <ModelViewerComponent/>
+                    </div>
+            )}
+            {!toggleView && (
+                <>
+                    <div id="model-detail-compact-right">
+                        <DetailHeaderComponent/>
+                        <DetailDescriptionComponent/>
+                    </div>
+                </>
+            )}
+            <div className="model-detail-toggle-container" style={detailToggle}>
+                <button className="model-detail-toggle-container-inner" onClick={() => handleToggleView()}
+                style={detailToggleDark}>
+                    <p style={detailToggleText}>{toggleView ? "TOGGLE INFO":"TOGGLE VIEWER"}</p>
+                </button>
+            </div>
+        </div>
+        )}
+        {!compactView && (
+        <div style={modelDetailContainer} id="model-detail-standard-outer">
             <div className="exit-button-container" style={exitButtonContainer}>
                 <div className="exit-button" style={exitButtonStyle} onClick={() => {handleClose()}}>
                         <p style={exitButtonText}>CLOSE</p>
                 </div>
             </div>
             <div className="model-detail-standard-inner">
-            {compactView && (
-                <div id="model-detail-compact-left">
-                    <DetailHeaderComponent/>
-                    <DetailDescriptionComponent/>
-                </div>
-            )}
-            {!compactView && (
                 <>
                     <div id="model-detail-standard-left">
                         <ModelViewerComponent/>
@@ -83,9 +100,11 @@ export default function DetailContainerComponent({ outData }) {
                         <DetailDescriptionComponent/>
                     </div>
                 </>
-            )}
             </div>
         </div>
+        )}
+        </>
+
     )
 }
 
@@ -93,7 +112,7 @@ export function DetailHeaderComponent(props) {
     const compactView = useDevice();
     const model = useModelContext();
     const HeaderText: React.CSSProperties = {
-        fontSize: compactView? "1.25rem":"1.75rem",
+        fontSize: compactView? "1.0rem":"1.5rem",
     };
     return (
         <div id="description-header">

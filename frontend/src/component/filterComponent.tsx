@@ -76,7 +76,7 @@ export default function FilterComponent({ outData }) {
     }, []);
     const colorScheme: React.CSSProperties = {
         backgroundColor: darkMode ? "#1f1f1f":"white",
-        outline: darkMode ? "2px solid #1f1f1f":"2px solid #c6c6c6",
+        outline: darkMode ? "2px solid #474747":"2px solid #c6c6c6",
     };
     const textColor: React.CSSProperties = {
         color: darkMode ? "white":"black",

@@ -28,7 +28,11 @@ Takes input: {item}
 
 function Loader() {
     const { active, progress, errors, item, loaded, total } = useProgress();
-    return <Html center>{progress} % loaded</Html>;
+    return <Html center>
+        <div className="model-view-loading">
+            <p>{progress.toFixed(2)}% LOADED</p>
+        </div>
+    </Html>;
 }
 
 function reducer(state, action) {
@@ -107,18 +111,23 @@ export default function ModelViewerComponent(props) {
         <>
         <ViewerStateContext.Provider value={viewState}>
             <ViewerDashboardComponent outData={handleConfigUpdate}/>
+            {!compactView && (
             <div className="model-view-controller">
                 <>
                 <button className="model-view-rotate-button"
                         onClick={() => {cameraControlRef.current?.rotate(DEG45, 0, true)}}>
-                            ROTATE THETA 45DEG
+                            <p>ROTATE THETA 45DEG</p>
                 </button>
                 <button className="model-view-reset-button"
-                        onClick={() => {cameraControlRef.current?.setPosition(200,90,200, true)}}>
-                            RESET VIEW
+                        onClick={() => {
+                            cameraControlRef.current?.setPosition(200,90,200, true);
+                            cameraControlRef.current?.zoomTo(compactView? model.zoom / 2 : model.zoom);
+                            }}>
+                            <p>RESET VIEW</p>
                 </button>
                 </>
             </div>
+            )}
             <div className="model-view-module" style={viewContainerStyle}>
             {model && (
                 <Canvas>
@@ -127,7 +136,13 @@ export default function ModelViewerComponent(props) {
                         <LightingComponent />
                         <group>
                         <CameraContext.Provider value={cameraContext} >
-                            <RotatingCamera distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
+                            {compactView && (
+                            <RotatingCameraComponent distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
+                            )}
+                            {!compactView && (
+                            <StandardCameraComponent distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
+                            )}
+   
                         </CameraContext.Provider>
                         </group>
 
@@ -141,13 +156,49 @@ export default function ModelViewerComponent(props) {
     )
 }
 
-export function RotatingCamera(props) {
+export function StandardCameraComponent(props) {
     const {camera} = useThree();
     const [rotation, setRotation] = useState(0);
     const CameraContext = useCameraContext();
 
     const cameraRef = useRef();
 
+    return (
+        <>
+        <CameraControls 
+            makeDefault
+            enabled={true}
+            ref={props.camControls}
+            camera={camera} />
+        <OrthographicCamera
+            ref={cameraRef}
+            makeDefault
+            zoom={parseInt(props.zoom)}
+            top={200}
+            bottom={-200}
+            left={200}
+            right={-200}
+            near={1}
+            far={2000}
+            position={[200,90,200]}
+        />
+        </>
+
+    )
+}
+export function RotatingCameraComponent(props) {
+    const {camera} = useThree();
+    const [rotation, setRotation] = useState(0);
+
+    const cameraRef = useRef();
+    useFrame((_, delta) => {
+        setRotation((prevRotation) => prevRotation + (delta / 2));
+        camera.position.x = Math.sin(rotation) * props.distance;
+        camera.position.z = Math.cos(rotation) * props.distance;
+        camera.position.y = 30;
+        camera.lookAt(0,0,0);
+        camera.updateProjectionMatrix();
+    });
     return (
         <>
         <CameraControls 
@@ -249,7 +300,7 @@ export function GLTFLoaderComponent(props) {
     const meshRef = useRef();
 
     // materials
-    const materialWF = useRef(new THREE.MeshStandardMaterial({color: 'red', wireframe: true }));
+    const materialWF = useRef(new THREE.MeshBasicMaterial({color: 'red', wireframe: true }));
     const materialSolid = useRef(new THREE.MeshStandardMaterial({ color: '#757575', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1}));
 
     // the second key in nodes is our object name
@@ -263,12 +314,23 @@ export function GLTFLoaderComponent(props) {
         )}
         {view.material == "solid" && (
             <>
-            <mesh ref={meshRef} geometry={geo} material={materialSolid.current}/>
+            <mesh ref={meshRef} geometry={geo} material={materialSolid.current}>
+            {view.shading == 'flat' && (
+                <meshBasicMaterial
+                    color="white"
+                />
+            )}
+            </mesh>
             </>
         )}
         {view.material == "albedo" && (
             <mesh ref={meshRef} geometry={geo}>
-                <TextureLoaderComponent textures={props.textures} itemcode={item.itemcode}/>
+                {props.textures.alpha == 'true' && (
+                <TextureWithAlphaLoaderComponent key={props.key} textures={props.textures} itemcode={item.itemcode}/>
+                )}
+                {props.textures.alpha == 'false' && (
+                <TextureLoaderComponent key={props.key} textures={props.textures} itemcode={item.itemcode}/>
+                )}
             </mesh>
         )}
         </>
@@ -286,20 +348,77 @@ export function TextureLoaderComponent(props) {
     const item = useModelContext();
     const view = useViewerStateContext();
     // TODO: in default state, view.color is NULL
+
     const [colorMap, normalMap, roughnessMap, metalnessMap] = useLoader(THREE.TextureLoader, [
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_color_${view.color}.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_normal.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_roughness.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_metallic.jpg`
-      ]);
+    ]);
     colorMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = false;
+
     return (
-        <meshStandardMaterial
+        <>
+        {view.shading == 'flat' && (
+            <meshBasicMaterial
             map={colorMap}
-            normalMap={normalMap}
-            roughnessMap={roughnessMap}
-            metalnessMap={metalnessMap}
-        />
+            />
+        )}
+        {view.shading != 'flat' && (
+            <>
+                <meshStandardMaterial
+                    map={colorMap}
+                    normalMap={normalMap}
+                    roughnessMap={roughnessMap}
+                    metalnessMap={metalnessMap}
+                    flatShading={view.shading == 'flat'}
+                />
+
+            </>
+        )}
+
+        </>
+
+    )
+}
+
+export function TextureWithAlphaLoaderComponent(props) {
+    const item = useModelContext();
+    const view = useViewerStateContext();
+    // TODO: in default state, view.color is NULL
+
+    const [colorMap, normalMap, roughnessMap, metalnessMap, alphaMap] = useLoader(THREE.TextureLoader, [
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_color_${view.color}.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_normal.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_roughness.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_metallic.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_alpha.jpg`
+    ]);
+    colorMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = alphaMap.flipY = false;
+
+    return (
+        <>
+        {view.shading == 'flat' && (
+            <meshBasicMaterial
+            map={colorMap}
+            />
+        )}
+        {view.shading != 'flat' && (
+            <>
+                <meshStandardMaterial
+                    map={colorMap}
+                    normalMap={normalMap}
+                    roughnessMap={roughnessMap}
+                    metalnessMap={metalnessMap}
+                    alphaMap={alphaMap}
+                    transparent={true}
+                />
+
+            </>
+        )}
+
+        </>
+
     )
 }
 
@@ -310,9 +429,6 @@ export function LightingComponent() {
 
     return (
         <>
-        {view.shading == 'flat' && (
-            <meshStandardMaterial color="white" />
-        )}
         {view.shading != 'flat' && (
             <>
             {view.shading == 'rural road' && (
@@ -402,13 +518,13 @@ export function ViewerDashboardComponent({ outData }) {
         'colormap': item.colormap,
     };
     return (
-        <div className="dashboard-container-outer">
+    <>
+    {!compactView && (
+        <div className="dashboard-container-standard">
             <div id="dashboard">
                 <ViewerOptionsContext.Provider value={optionsGlossary}>
                     <div className="dashboard-fixed-container">
-                        {!compactView && (
                         <DashboardSelectorComponent inData={shaderSelector} outData={handleClick}/>
-                        )}
                         <DashboardSelectorComponent inData={materialSelector} outData={handleClick}/>
                     </div>
                     <div className="dashboard-flex-container">
@@ -418,12 +534,93 @@ export function ViewerDashboardComponent({ outData }) {
                     <SelectorToggleComponent inData={wireframeSelector} outData={handleClick}></SelectorToggleComponent>
                 </ViewerOptionsContext.Provider>
             </div>
-
         </div>
+    )}
+    {compactView && (
+        <div className="dashboard-container-compact">
+            <div id="dashboard">
+                <ViewerOptionsContext.Provider value={optionsGlossary}>
+                    <div className="dashboard-fixed-container">
+                        <DashboardSelectorComponent inData={materialSelector} outData={handleClick}/>
+                    </div>
+                    <div className="dashboard-flex-compact">
+                        <CompactLODSelectorComponent inData={lodSelector} outData={handleClick}/>
+                        <ColorSelectorComponent inData={colorSelector} outData={handleClick}/>
+                    </div>
+                    <SelectorToggleComponent inData={wireframeSelector} outData={handleClick}></SelectorToggleComponent>
+                </ViewerOptionsContext.Provider>
+            </div>
+        </div>
+    )}
+    </>
     );
 
 }
+export function CompactLODSelectorComponent({inData, outData}) {
+    const view = useViewerStateContext();
+    const parameters = useViewerOptionsContext();
 
+    function handleClick(action) {
+        let viewConfig = {
+                          'lod': view.lod,
+                          'shading': view.shading,
+                          'material': view.material,
+                          'color': view.color,
+                          'wireframe': view.wireframe};
+        let lod = parseInt(view.lod[3]);
+        switch (action) {
+            case 'increment':
+                if (lod == parameters.lod.length - 1) {
+                    viewConfig['lod'] = 'lod0';
+                } else {
+                    lod += 1;
+                    viewConfig['lod'] = 'lod' + lod.toString();
+                }
+                break;
+            case 'decrement':
+                if (lod == 0) {
+                    lod = parameters.lod.length - 1;
+                    viewConfig['lod'] = 'lod' + lod.toString();
+                } else {
+                    lod -= 1;
+                    viewConfig['lod'] = 'lod' + lod.toString();
+                }
+                break;
+        }
+        outData(viewConfig);
+    }
+    let paramHeaderStyle = {
+        height: "1.2rem",
+        margin: "auto",
+        marginTop: "0rem",
+        marginBottom: "0rem",
+        fontSize: "0.85rem",
+        fontFamily: "Swiss721",
+        fontWeight: "300",
+        zIndex: "9",
+    }
+    return (
+        <>
+            <div id="lod-selector-compact">
+                <p style={paramHeaderStyle}>{inData.title}</p>
+                <div id="lod-selector-compact-interface">
+                    <button id="lod-selector-compact-button"
+                            onClick={() => handleClick('decrement')}>
+                        -
+                    </button>
+                    <div id="lod-selector-compact-display">
+                        <p>{view.lod.toUpperCase()}</p>
+                    </div>
+                    <button id="lod-selector-compact-button"
+                            onClick={() => handleClick('increment')}>
+                        +
+                    </button>
+                </div>
+
+            </div>
+        </>
+    );
+}
 export function DashboardSelectorComponent({ inData, outData }) {
     const view = useViewerStateContext();
     const parameters = useViewerOptionsContext();

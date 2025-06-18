@@ -32,7 +32,7 @@ export default function CntctComponent({ outData }) {
             andy: copied.andy,
         };
         switch (text) {
-            case "help":
+            case "info":
                 copiedState = {
                     info: true,
                     andy: copied.andy,
