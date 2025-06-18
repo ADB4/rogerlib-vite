@@ -38,7 +38,7 @@ export default function DetailContainerComponent({ outData }) {
 
     const exitButtonContainer: React.CSSProperties = {
         backgroundColor: darkMode? "black":"#c2c2c2",
-        outline: darkMode? "1px solid #292929":"1px solid #bdbdbd",
+        border: darkMode? "1px solid #292929":"1px solid #bdbdbd",
     };
     const exitButtonText: React.CSSProperties = {
         color: darkMode? "white":"white",

@@ -111,8 +111,14 @@ export default function ModelViewerComponent(props) {
         <>
         <ViewerStateContext.Provider value={viewState}>
             <ViewerDashboardComponent outData={handleConfigUpdate}/>
-            {!compactView && (
+
             <div className="model-view-controller">
+            {compactView && (
+                <div className="model-view-polycount">
+                    <p>{model.polycount[viewState.lod]} TRIANGLES</p>
+                </div>
+            )}
+            {!compactView && (
                 <>
                 <button className="model-view-rotate-button"
                         onClick={() => {cameraControlRef.current?.rotate(DEG45, 0, true)}}>
@@ -126,8 +132,9 @@ export default function ModelViewerComponent(props) {
                             <p>RESET VIEW</p>
                 </button>
                 </>
-            </div>
             )}
+            </div>
+
             <div className="model-view-module" style={viewContainerStyle}>
             {model && (
                 <Canvas>
@@ -158,8 +165,6 @@ export default function ModelViewerComponent(props) {
 
 export function StandardCameraComponent(props) {
     const {camera} = useThree();
-    const [rotation, setRotation] = useState(0);
-    const CameraContext = useCameraContext();
 
     const cameraRef = useRef();
 
@@ -222,53 +227,6 @@ export function RotatingCameraComponent(props) {
 
     )
 }
-/*
-        setRotation((prevRotation) => prevRotation + speed);
-        camera.position.x = Math.sin(rotation) * distance;
-        camera.position.z = Math.cos(rotation) * distance;
-        camera.lookAt(0,0,0);
-        camera.updateProjectionMatrix();
-                        <OrbitControls 
-                            ref={orbitRef}
-                            autoRotate={false}
-                            autoRotateSpeed={2.0}
-                            enableDamping={false}
-                            enablePan={false}
-                        />
-                        <CameraControls
-                            camera={cameraRef}
-                            target={new THREE.Vector3(0,0,0)}
-                            enableDamping={false}
-                        />
-                        <OrthographicCamera
-                            makeDefault
-                            ref={cameraRef}
-                            zoom={parseInt(props.zoom)}
-                            top={200}
-                            bottom={-200}
-                            left={200}
-                            right={-200}
-                            near={1}
-                            far={2000}
-                            position={[90,45,200]}
-                        />
-    useFrame((_, delta) => {
-        if (CameraContext.autoRotate) {
-            setRotation((prevRotation) => prevRotation + (delta / 2));
-            camera.position.x = Math.sin(rotation) * props.distance;
-            camera.position.z = Math.cos(rotation) * props.distance;
-            camera.position.y = 30;
-            camera.lookAt(0,0,0);
-        } else {
-            setRotation((prevRotation) => prevRotation);
-            camera.position.x = Math.sin(rotation) * props.distance;
-            camera.position.z = Math.cos(rotation) * props.distance;
-            camera.position.y = 30;
-            camera.lookAt(0,0,0);
-        }
-        camera.updateProjectionMatrix();
-    });
-*/
 
 /*
 props
@@ -589,20 +547,10 @@ export function CompactLODSelectorComponent({inData, outData}) {
         }
         outData(viewConfig);
     }
-    let paramHeaderStyle = {
-        height: "1.2rem",
-        margin: "auto",
-        marginTop: "0rem",
-        marginBottom: "0rem",
-        fontSize: "0.85rem",
-        fontFamily: "Swiss721",
-        fontWeight: "300",
-        zIndex: "9",
-    }
     return (
         <>
             <div id="lod-selector-compact">
-                <p style={paramHeaderStyle}>{inData.title}</p>
+                <p>{inData.title}</p>
                 <div id="lod-selector-compact-interface">
                     <button id="lod-selector-compact-button"
                             onClick={() => handleClick('decrement')}>
