@@ -3,7 +3,6 @@ import { useState, useLayoutEffect} from 'react';
 import Markdown from 'react-markdown';
 import { useColorModeContext, useDeviceContext } from '../context/galleryContext';
 import { Link } from "react-router";
-import { useDevice } from '../hooks/useDevice';
 
 interface DeetsType {
     info: string;
@@ -14,16 +13,16 @@ interface CopiedType {
     andy: boolean;
 }
 export default function CntctComponent({ outData }) {
-    const [deets, setDeets] = useState<DeetsType>({
-        info: "help@rogerlibrary.com",
-        andy: "andy@rogerlibrary.com",
-    });
     const [copied, setCopied] = useState<CopiedType>({
         info: false,
         andy: false,
     });
-    const [footer, setFooter] = useState<string>("#### Hello, and thank you for visiting! The library is rolling out its first major update, which includes an all-new model viewer, new content, and performance optimizations.\n#### For any inquiries related to Roger Motorsports Library, please send a message to the appropriate email.");
-    const { darkMode, setDarkMode } = useColorModeContext();
+    const deets: DeetsType = {
+        info: "help@rogerlibrary.com",
+        andy: "andy@rogerlibrary.com",
+    };
+    const footer: string = "#### Hello, and thank you for visiting! The library is rolling out its first major update, which includes an all-new model viewer, new content, and performance optimizations.\n#### For any inquiries related to Roger Motorsports Library, please send a message to the appropriate email.";
+    const darkMode = useColorModeContext();
     const compactView = useDeviceContext();
 
     function handleCopyToClipboard(text) {
@@ -66,9 +65,6 @@ export default function CntctComponent({ outData }) {
     const cntctCopy: React.CSSProperties = {
         backgroundColor: blackwhite,
         color: whiteblack,
-    };
-    const textColor = {
-        color: darkMode ?"white":"black",
     };
     const cntctContainer: React.CSSProperties = {
         color: darkMode ? "white":"black",

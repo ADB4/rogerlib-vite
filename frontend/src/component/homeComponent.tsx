@@ -1,12 +1,10 @@
 import * as React from "react"
 import { useLayoutEffect } from 'react';
 import QuoteComponent from './quoteComponent';
-import { useColorModeContext, useDeviceContext } from '../context/galleryContext';
+import { useDeviceContext } from '../context/galleryContext';
 import { Link } from "react-router";
-import { useDevice } from '../hooks/useDevice';
 
 export default function HomeComponent({ outData }) {
-    const { darkMode, setDarkMode } = useColorModeContext();
     const compactView = useDeviceContext();
 
     useLayoutEffect(() => {

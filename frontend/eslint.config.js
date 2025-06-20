@@ -6,8 +6,32 @@ import { defineConfig } from "eslint/config";
 
 
 export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"] },
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], languageOptions: { globals: globals.browser } },
+  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], 
+    plugins: { js }, 
+    extends: ["js/recommended"] },
+  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], 
+    languageOptions: { globals: globals.browser } },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  {
+    ...pluginReact.configs.flat.recommended,
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
+  {
+  plugins: {
+      react: pluginReact,
+    },
+    "rules": {
+      "react/prop-types": 0,
+      "react/no-unknown-property": "off",
+      "react/react-in-jsx-scope": "off",
+      "react/no-unescaped-entities": "off"
+    }
+  }
 ]);
+
+
