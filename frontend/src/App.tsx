@@ -66,44 +66,26 @@ export default function App() {
         overflowX: "visible",
         borderRadius: compactView ? ("0rem 0rem 0rem 0rem") : ("0rem 0rem 1.5rem 1.5rem"),
         backgroundColor: darkMode ? colorScheme.backgroundColors[0] : colorScheme.backgroundColors[1],
-        transition: "all .5s ease",
-        WebkitTransition: "all .5s ease",
-        MozTransition: "all .5s ease",
     };
     let h1style: React.CSSProperties = {
         color: darkMode ? colorScheme.textColors[0] : colorScheme.textColors[1],
-        transition: "all .5s ease",
-        WebkitTransition: "all .5s ease",
-        MozTransition: "all .5s ease",
     };
     const webColorSlider = {
         backgroundColor: darkMode ? colorScheme.beanColors[0] : colorScheme.beanColors[1],
         marginLeft: darkMode ? "0.125rem":"1.125rem",
         marginRight: darkMode ? "auto":"auto",
-        transition: "all .5s ease",
-        WebKitTransition: "all .5s ease",
-        MozTransition: "all .5s ease",
     };
     const webColorBackground = {
         backgroundColor: darkMode ? colorScheme.beanColors[0] : colorScheme.beanColors[1],
-        transition: "all .5s ease",
-        WebKitTransition: "all .5s ease",
-        MozTransition: "all .5s ease",
     };
     const webColorToggle = {
         backgroundColor: darkMode ? colorScheme.beanTextColors[0] : colorScheme.beanTextColors[1],
-        transition: "all .5s ease",
-        WebKitTransition: "all .5s ease",
-        MozTransition: "all .5s ease",
     };
     const webColorToggleInfoText = {
         color: darkMode ? colorScheme.beanColors[0] : colorScheme.beanColors[1],
     };
     const webColorToggleInfo = {
         backgroundColor: darkMode ? colorScheme.beanTextColors[0] : colorScheme.beanTextColors[1],
-        transition: "all .5s ease",
-        WebKitTransition: "all .5s ease",
-        MozTransition: "all .5s ease",
     };
 
     return (
@@ -130,6 +112,10 @@ export default function App() {
                               style={h1style}>
                             CONTACT
                         </Link>
+                        <a href="https://github.com/ADB4/rogerlib-vite"
+                            target="_blank"            className="roger-header-nav-link">
+                            <img className="graphic-github" src={darkMode ? "https://d2fhlomc9go8mv.cloudfront.net/static/graphics/github-mark-white.svg" : "https://d2fhlomc9go8mv.cloudfront.net/static/graphics/github-mark.svg"} alt="Github logo"/>
+                        </a>
                     </nav>
                     <div id="web-color-toggle-container">
                         <div id="web-color-toggle-background"

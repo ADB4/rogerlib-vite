@@ -189,6 +189,7 @@ export function DetailDescriptionComponent(props) {
         gridRowEnd: "-1",
         overflowY: "scroll",
         overflowX: "hidden",
+        scrollbarWidth: "none",
         width: "auto",
         minHeight: "4rem",
         height: compactView ? ("100%"):("100%"),
