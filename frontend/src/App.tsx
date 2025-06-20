@@ -7,7 +7,6 @@ import { useDevice } from './hooks/useDevice';
 import HomeComponent from './component/homeComponent';
 import CntctComponent from './component/cntctComponent';
 import AboutComponent from './component/aboutComponent';
-import ChangelogComponent from "./component/changeComponent";
 
 import type { ColorModeContextType } from "./context/galleryContext";
 import './App.css'
@@ -24,7 +23,6 @@ export default function App() {
         darkMode: false,
         setDarkMode: () => {}
     };
-    const [colorToggle, setColorToggle] = useState<boolean>(defaultColor.darkMode);
     const [darkMode, setDarkMode] = useState<boolean>(defaultColor.darkMode);
     const [colorScheme, setColorScheme] = useState<ColorSchemeType>({
         logoURL: ["",""],
@@ -34,9 +32,9 @@ export default function App() {
         beanTextColors: ["",""],
     });
     const compactView = useDevice();
+
     function handleColorToggle(toggle: boolean, data: ColorSchemeType): void {
-        setColorToggle(toggle);
-        let scheme: ColorSchemeType = {
+        const scheme: ColorSchemeType = {
             'logoURL': ["https://d2fhlomc9go8mv.cloudfront.net/static/graphics/logo_rogerlib_white.svg","https://d2fhlomc9go8mv.cloudfront.net/static/graphics/logo_rogerlib_black.svg"],
             'backgroundColors': [data.backgroundColors[0],data.backgroundColors[1]],
             'textColors': [data.textColors[0],data.textColors[1]],
@@ -51,7 +49,7 @@ export default function App() {
     useLayoutEffect(() => {
         setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
     },[]);
-    let rootContainerStyle: React.CSSProperties = {
+    const rootContainerStyle: React.CSSProperties = {
         display: "grid",
         gridTemplateColumns: "auto",
         gridTemplateRows: "4.0rem auto",
@@ -67,7 +65,7 @@ export default function App() {
         borderRadius: compactView ? ("0rem 0rem 0rem 0rem") : ("0rem 0rem 1.5rem 1.5rem"),
         backgroundColor: darkMode ? colorScheme.backgroundColors[0] : colorScheme.backgroundColors[1],
     };
-    let h1style: React.CSSProperties = {
+    const h1style: React.CSSProperties = {
         color: darkMode ? colorScheme.textColors[0] : colorScheme.textColors[1],
     };
     const webColorSlider = {
