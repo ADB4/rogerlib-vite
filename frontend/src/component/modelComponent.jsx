@@ -305,16 +305,19 @@ displacement: boolean
 export function TextureLoaderComponent(props) {
     const item = useModelContext();
     const view = useViewerStateContext();
-    // TODO: in default state, view.color is NULL
 
-    const [colorMap, normalMap, roughnessMap, metalnessMap] = useLoader(THREE.TextureLoader, [
-        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_color_${view.color}.jpg`,
+    const [colorMap, normalMap, roughnessMap, metalnessMap] = props.textures.uniquevariants == "true" ? useLoader(THREE.TextureLoader, [
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_normal.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_roughness.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_metallic.jpg`
+    ]) : useLoader(THREE.TextureLoader, [
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_normal.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_roughness.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_metallic.jpg`
     ]);
     colorMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = false;
-
     return (
         <>
         {view.shading == 'flat' && (
@@ -329,7 +332,6 @@ export function TextureLoaderComponent(props) {
                     normalMap={normalMap}
                     roughnessMap={roughnessMap}
                     metalnessMap={metalnessMap}
-                    flatShading={view.shading == 'flat'}
                 />
 
             </>
@@ -345,8 +347,14 @@ export function TextureWithAlphaLoaderComponent(props) {
     const view = useViewerStateContext();
     // TODO: in default state, view.color is NULL
 
-    const [colorMap, normalMap, roughnessMap, metalnessMap, alphaMap] = useLoader(THREE.TextureLoader, [
-        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_color_${view.color}.jpg`,
+    const [colorMap, normalMap, roughnessMap, metalnessMap, alphaMap] = props.textures.uniquevariants == "true" ? useLoader(THREE.TextureLoader, [
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_normal.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_roughness.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_metallic.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_alpha.jpg`
+    ]) : useLoader(THREE.TextureLoader, [
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_normal.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_roughness.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_metallic.jpg`,

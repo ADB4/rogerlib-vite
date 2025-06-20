@@ -279,7 +279,7 @@ def fetch_all_json():
     return data
 
 def hydrate():
-    data = fetch_json_s3("models/json/models_starter.json")
+    data = fetch_json_local("model/_json/models_starter.json")
     result = data['models']
     models = []
     for model in result:
@@ -388,8 +388,9 @@ def fetch_json_s3(filename):
     return result
 
 def fetch_json_local(filename):
-    with open("rogerlib/static/") as f:
+    with open(str.format("rogerlib/static/{0}", filename)) as f:
         data = json.load(f)
+    return data
 
 def fetch_markdown_local(filename):
     with open(str.format("rogerlib/static/markdown/{0}",filename)) as f:
