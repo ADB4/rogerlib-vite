@@ -22,7 +22,7 @@ export default function CntctComponent({ outData }) {
         info: false,
         andy: false,
     });
-    const [footer, setFooter] = useState<string>("#### Hello, and thank you for visiting! Since the library launched at the beginning of the year, the main priority has been building out internal tooling to facilitate the various processes needed to catalogue new models, including automated product photography to ensure each model is compatible with the 3D model viewer.  \n#### In the mean time, please feel free to reach out to the appropriate email below for any inquiries related to Roger Motorsports Library.");
+    const [footer, setFooter] = useState<string>("#### Hello, and thank you for visiting! The library is rolling out its first major update, which includes an all-new model viewer, new content, and performance optimizations.\n#### For any inquiries related to Roger Motorsports Library, please send a message to the appropriate email.");
     const { darkMode, setDarkMode } = useColorModeContext();
     const compactView = useDeviceContext();
 
@@ -101,7 +101,7 @@ export default function CntctComponent({ outData }) {
                         </button>
                     </div>
                     <div className="library-cntct-info">
-                        <h5 style={cntctText}>For general inquiries, including commercial licensing:</h5>
+                        <h5 style={cntctText}>For general/business inquiries:</h5>
                     </div>
                     <div className="library-cntct-module">
                         <h6 style={cntctText}>andy@rogerlibrary.com</h6>
