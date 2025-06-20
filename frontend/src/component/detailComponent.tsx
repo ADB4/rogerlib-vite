@@ -2,17 +2,16 @@ import * as React from "react"
 import { useState, useEffect } from "react";
 
 // import ModelViewerComponent from "./modelViewer";
-import { DetailContext, useColorModeContext, useModelContext, useDeviceContext } from "../context/galleryContext";
+import { useColorModeContext, useModelContext, useDeviceContext } from "../context/galleryContext";
 import type { ItemType } from "../context/galleryContext";
 import { useDevice } from "../hooks/useDevice";
-import { compactDescriptionHeader, compactExitButton } from "../style/modelDetailStyles";
+import { compactExitButton } from "../style/modelDetailStyles";
 import ModelViewerComponent from "./modelComponent";
 import DownloadComponent from "../component/downloadComponent";
 
 export default function DetailContainerComponent({ outData }) {
-    const model = useModelContext();
     const compactView = useDeviceContext();
-    const { darkMode, setDarkMode } = useColorModeContext();
+    const darkMode = useColorModeContext();
     const [toggleView, setToggleView] = useState(true);
 
     function handleClose() {
@@ -26,10 +25,6 @@ export default function DetailContainerComponent({ outData }) {
     // height is image resolution + height of view dashboard (8rem) + height of item header (6rem)
     // mobile view
     exitButtonStyle = compactExitButton;
-    const textColor: React.CSSProperties = {
-        color: darkMode? "#3B6F88":"black",
-        backgroundColor: darkMode ? "#0a0a0a":"white",
-    };
     const modelDetailContainer: React.CSSProperties = {
         color: darkMode ? "#dedede":"black",
         backgroundColor: darkMode ? "#1f1f1f":"white",
@@ -108,7 +103,7 @@ export default function DetailContainerComponent({ outData }) {
     )
 }
 
-export function DetailHeaderComponent(props) {
+export function DetailHeaderComponent() {
     const compactView = useDevice();
     const model = useModelContext();
     const HeaderText: React.CSSProperties = {
@@ -128,9 +123,9 @@ export function DetailHeaderComponent(props) {
 interface ContentType {
     [key: string]: string;
 }
-export function DetailDescriptionComponent(props) {
+export function DetailDescriptionComponent() {
     const model = useModelContext();
-    const { darkMode, setDarkMode } = useColorModeContext();
+    const darkMode = useColorModeContext();
     const [content, setContent] = useState<ContentType>({
         'header': '',
         'description': '',
@@ -146,16 +141,13 @@ export function DetailDescriptionComponent(props) {
     const compactView = useDevice();
 
     useEffect(() => {
-        let ignoreStaleRequest = false;
-        let currentItem: ItemType = model;
-        const itemCategory = currentItem.category;
-        const itemSubcategory = currentItem.subcategory;
+        const currentItem: ItemType = model;
 
         let colorString = "Available in ";
         let i = 0;
         for (;i < currentItem.colors.length;) {
-            let color = currentItem.colors[i];
-            let formattedString = currentItem.colormap[color];
+            const color = currentItem.colors[i];
+            const formattedString = currentItem.colormap[color];
             // if last element, no comma
             if (i == (currentItem.colors.length - 1)) {
                 colorString = colorString.concat(formattedString);
@@ -164,7 +156,7 @@ export function DetailDescriptionComponent(props) {
             }
             i = i+1;
         }
-        let currentContent: ContentType = {
+        const currentContent: ContentType = {
             'header': content.header,
             'description': content.description,
             'material': content.material,
@@ -177,12 +169,9 @@ export function DetailDescriptionComponent(props) {
             'downloadnotice': content.downloadnotice,
         };
         setContent(currentContent);
-        return () => {
-            ignoreStaleRequest = true;
-        };
     }, [])
 
-    let descriptionContentContainer: React.CSSProperties = {
+    const descriptionContentContainer: React.CSSProperties = {
         gridColumnStart: "1",
         gridColumnEnd: "-1",
         gridRowStart: "2",
@@ -200,13 +189,13 @@ export function DetailDescriptionComponent(props) {
         flexDirection: "column",
         alignItems: "left",
     };
-    let descriptionSerif: React.CSSProperties = {
+    const descriptionSerif: React.CSSProperties = {
         fontFamily: "Swiss721",
         fontWeight: "200",
         fontSize: "1.0rem",
         margin: "1rem 2rem 1rem",
     };
-    let lods = model.lods;
+    const lods = model.lods;
     const outline = {
         outline: darkMode ? "1px solid black":"1px solid black",
     };
@@ -234,7 +223,7 @@ export function DetailDescriptionComponent(props) {
                     </div>
                     <div id="description-lods-right">
                         <ul id="description-lods-right">
-                            {lods.map((lod, j) => (
+                            {lods.map((lod) => (
                                 <li key={lod}>{model.polycount[lod]}</li>
                             ))}
                         </ul>

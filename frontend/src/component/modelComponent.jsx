@@ -1,6 +1,6 @@
 import * as React from "react"
-import { useState, useEffect, useRef, useLayoutEffect, useMemo, useReducer } from "react";
-import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useCameraContext, useModelContext, useDeviceContext } from "../context/galleryContext";
+import { useState, useEffect, useRef, useReducer } from "react";
+import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useModelContext, useDeviceContext } from "../context/galleryContext";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import {
     Environment,
@@ -8,10 +8,7 @@ import {
     Html,
     useProgress,
     useGLTF,
-    useTexture,
     CameraControls,
-    CameraControlsImpl,
-
     } from "@react-three/drei";
 
 import * as THREE from 'three';
@@ -54,10 +51,10 @@ export default function ModelViewerComponent(props) {
         color: "NULL",
         wireframe: true,
     });
-    const [cameraContext, setCameraContext] = useState({
+    const cameraContext = {
         autoRotate: true,
         speed: 1.0,
-    });
+    };
 
     const cameraControlRef = useRef();
     const DEG45 = Math.PI / 4;
@@ -224,7 +221,6 @@ itemcode: string
 models: string[]
 */
 export function GLTFComponent(props) {
-    const view = useViewerStateContext();
     const item = useModelContext();
 
     return (
@@ -244,7 +240,7 @@ filename: string
 export function GLTFLoaderComponent(props) {
     const item = useModelContext();
     const view = useViewerStateContext();
-    const { nodes, materials } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/gltf/${props.filename}`);
+    const { nodes } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/gltf/${props.filename}`);
     const meshRef = useRef();
 
     // materials
@@ -396,13 +392,6 @@ export function LightingComponent() {
 */
 export function ViewerDashboardComponent({ outData }) {
     const item = useModelContext();
-    const [viewOptions, setViewOptions] = useState({
-        'lod': [],
-        'shading': ['flat','studio','sunset','rural road'],
-        'material': ['solid','albedo'],
-        'color': [],
-        'wireframe': ['true', 'false'],
-    });
     const compactView = useDeviceContext();
 
     function handleClick(data) {
@@ -695,7 +684,7 @@ export function SelectorComponent({ inData, outData }) {
 
 export function ColorSelectorComponent({ inData, outData}) {
     const view = useViewerStateContext();
-    const parameters = useViewerOptionsContext();
+
     function handleSelect(value) {
         let viewConfig = {
                           'lod': view.lod,
@@ -726,7 +715,7 @@ export function ColorSelectorComponent({ inData, outData}) {
             <div id="color-selector-container">
                 <p style={paramHeaderStyle}>COLOR</p>
                     <div className={inData.flexbox}>
-                    {inData.options.map((option, i) => (
+                    {inData.options.map((option) => (
                         <>
                         <div key={option} className="color-selector-outer">
                             <button key={option}

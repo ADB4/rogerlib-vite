@@ -1,14 +1,12 @@
 import * as React from "react"
-import { useState } from 'react';
 import { useColorModeContext, useDeviceContext } from '../context/galleryContext';
-import { useDevice } from '../hooks/useDevice';
 
 export default function QuoteComponent() {
-    const { darkMode, setDarkMode } = useColorModeContext();
-    const [activeQuote, setActiveQuote] = useState({
+    const darkMode = useColorModeContext();
+    const activeQuote = {
             'content': "I am crouched, half hidden but feeling very vulnerable, behind a drudge, peering through tall weeds into a barren valley. The huge plane eventually lands in the clearing and comes to a rest. I am momentarily relieved, but soon a hatch opens in the plane's belly and out flies a smaller silver airplane to begin the search all over again. I am frozen in terror. Just as the plane spots me I wake up.",
             'author': "Pippa Garner; Unpublished, 1992",
-    });
+    };
     const compactView = useDeviceContext();
     const fontsize = compactView ? "1.5rem":"2.0rem";
     const textColor: React.CSSProperties = {

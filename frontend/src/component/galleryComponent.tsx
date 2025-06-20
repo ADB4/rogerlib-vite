@@ -1,8 +1,7 @@
 import * as React from "react"
 import { useState, useLayoutEffect, useEffect } from "react";
-import { ModelContext, useModelContext, useColorModeContext } from "../context/galleryContext";
+import { ModelContext, useModelContext } from "../context/galleryContext";
 import type { ItemType } from "../context/galleryContext";
-import { useDevice } from "../hooks/useDevice";
 import DetailContainerComponent from "../component/detailComponent";
 import FilterComponent from "../component/filterComponent";
 
@@ -19,14 +18,13 @@ export default function GalleryComponent({ outData }) {
         item: null, 
         toggle: false
     });
-    const { darkMode, setDarkMode } = useColorModeContext();
 
     function delay(ms: number) {
         return new Promise(res => setTimeout(res, ms));
     }
 
     async function openDetailView(data) {
-        let detailViewVar: DetailViewType = {
+        const detailViewVar: DetailViewType = {
             item: null,
             toggle: false,
         };
@@ -35,13 +33,13 @@ export default function GalleryComponent({ outData }) {
             setInformationToggle(false);
         }
         if (detailViewConfig.item == null) {
-            let detailViewBefore: DetailViewType = {
+            const detailViewBefore: DetailViewType = {
                 item: data,
                 toggle: false,
             };
             setDetailViewConfig(detailViewBefore);
             await delay(200);
-            let detailViewAfter: DetailViewType = {
+            const detailViewAfter: DetailViewType = {
                 item: data,
                 toggle: true,
             };
@@ -59,8 +57,8 @@ export default function GalleryComponent({ outData }) {
             setSelection(items);
         } else {
             const currentItems = items;
-            let filterItems: ItemType[] = [];
-            for (let item of currentItems) {
+            const filterItems: ItemType[] = [];
+            for (const item of currentItems) {
                 if (data.includes(item.subcategory)) {
                     filterItems.push(item);
                 }
@@ -91,9 +89,9 @@ export default function GalleryComponent({ outData }) {
             .then((data) => {
                 if (!ignoreStaleRequest) {
                     const itemList = data.models.slice();
-                    let itemArray: ItemType[] = [];
-                    for (let model of itemList) {
-                        let itemDict: ItemType = {
+                    const itemArray: ItemType[] = [];
+                    for (const model of itemList) {
+                        const itemDict: ItemType = {
                             'itemcode': model.itemcode,
                             'itemname': model.itemname,
                             'material': model.material,
@@ -130,10 +128,6 @@ export default function GalleryComponent({ outData }) {
     if (detailViewConfig == null) {
         return null;
     } else {
-        const inData = {
-            item: detailViewConfig.item,
-        };
-
         return (
             <>
             <div id="model-gallery-container-outer">
@@ -167,13 +161,13 @@ export function LibraryListComponent({ inData, outData }) {
         <div id="model-gallery-grid">
             <div id="model-gallery-list">
                 <div id="model-gallery-flex">
-                {inData.selection.map((model: ItemType, i: number) => (
+                {inData.selection.map((model: ItemType) => (
                     <ModelContext.Provider key={model.itemcode} value={model}>
                         <LibraryItemComponent key={model.itemcode} outData={outData}>
                         </LibraryItemComponent>
                     </ModelContext.Provider>
                 ))}
-                {inData.items.map((model: ItemType, i: number) => (
+                {inData.items.map((model: ItemType) => (
                     <ModelContext.Provider key={model.itemcode} value={model}>
                         <GhostItemComponent key={model.itemcode} outData={outData}>
                         </GhostItemComponent>

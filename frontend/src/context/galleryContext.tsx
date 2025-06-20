@@ -1,13 +1,10 @@
 import { createContext, useContext } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import { Camera } from 'three';
-
 
 interface CameraContextType {
     autoRotate: boolean;
     speed: number;
 }
-
 
 export const CameraContext = createContext<CameraContextType | undefined>(undefined);
 export const useCameraContext = () => {

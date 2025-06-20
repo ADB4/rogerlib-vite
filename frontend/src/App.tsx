@@ -46,9 +46,11 @@ export default function App() {
     function toggleDarkMode(): void {
         setDarkMode(!darkMode);
     }
+
     useLayoutEffect(() => {
         setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
     },[]);
+
     const rootContainerStyle: React.CSSProperties = {
         display: "grid",
         gridTemplateColumns: "auto",
@@ -111,7 +113,9 @@ export default function App() {
                             CONTACT
                         </Link>
                         <a href="https://github.com/ADB4/rogerlib-vite"
-                            target="_blank"            className="roger-header-nav-link">
+                            target="_blank"
+                            rel="noreferrer"
+                            className="roger-header-nav-link">
                             <img className="graphic-github" src={darkMode ? "https://d2fhlomc9go8mv.cloudfront.net/static/graphics/github-mark-white.svg" : "https://d2fhlomc9go8mv.cloudfront.net/static/graphics/github-mark.svg"} alt="Github logo"/>
                         </a>
                     </nav>

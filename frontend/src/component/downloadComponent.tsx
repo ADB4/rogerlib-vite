@@ -2,7 +2,7 @@ import * as React from "react"
 
 export default function DownloadComponent({ inData }) {
     function handleClick(itemcode: string) {
-        let url: string = "api/v1/downloads/" + itemcode;
+        const url: string = "api/v1/downloads/" + itemcode;
         fetch(url, { 
             credentials: "same-origin"})
             .then((response) => {
