@@ -7,7 +7,7 @@ import type { ItemType } from "../context/galleryContext";
 import { useDevice } from "../hooks/useDevice";
 import { compactExitButton } from "../style/modelDetailStyles";
 import ModelViewerComponent from "./modelComponent";
-import DownloadComponent from "../component/downloadComponent";
+// import DownloadComponent from "../component/downloadComponent";
 
 export default function DetailContainerComponent({ outData }) {
     const compactView = useDeviceContext();

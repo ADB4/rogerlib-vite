@@ -37,7 +37,7 @@ function reducer(state, action) {
     }
 }
 
-export default function ModelViewerComponent(props) {
+export default function ModelViewerComponent() {
     const model = useModelContext();
     const darkMode = useColorModeContext();
     const compactView = useDeviceContext();
