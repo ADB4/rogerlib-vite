@@ -20,7 +20,7 @@ Takes input: {item}
 */
 
 function Loader() {
-    const { active, progress, errors, item, loaded, total } = useProgress();
+    const { progress } = useProgress();
     return <Html center>
         <div className="model-view-loading">
             <p>{progress.toFixed(2)}% LOADED</p>
