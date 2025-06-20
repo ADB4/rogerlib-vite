@@ -8,7 +8,7 @@ import HomeComponent from './component/homeComponent';
 import CntctComponent from './component/cntctComponent';
 import AboutComponent from './component/aboutComponent';
 
-import type { ColorModeContextType } from "./context/galleryContext";
+
 import './App.css'
 
 interface ColorSchemeType {
@@ -19,9 +19,8 @@ interface ColorSchemeType {
     beanTextColors: string[];
 }
 export default function App() {
-    const defaultColor: ColorModeContextType = {
+    const defaultColor = {
         darkMode: false,
-        setDarkMode: () => {}
     };
     const [darkMode, setDarkMode] = useState<boolean>(defaultColor.darkMode);
     const [colorScheme, setColorScheme] = useState<ColorSchemeType>({
@@ -33,7 +32,7 @@ export default function App() {
     });
     const compactView = useDevice();
 
-    function handleColorToggle(toggle: boolean, data: ColorSchemeType): void {
+    function handleColorToggle(data: ColorSchemeType): void {
         const scheme: ColorSchemeType = {
             'logoURL': ["https://d2fhlomc9go8mv.cloudfront.net/static/graphics/logo_rogerlib_white.svg","https://d2fhlomc9go8mv.cloudfront.net/static/graphics/logo_rogerlib_black.svg"],
             'backgroundColors': [data.backgroundColors[0],data.backgroundColors[1]],
@@ -50,7 +49,6 @@ export default function App() {
     useLayoutEffect(() => {
         setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
     },[]);
-
     const rootContainerStyle: React.CSSProperties = {
         display: "grid",
         gridTemplateColumns: "auto",
@@ -92,7 +90,7 @@ export default function App() {
         <div className="root-container" 
              style={rootContainerStyle}>
             <DeviceContext.Provider value={compactView}>
-            <ColorModeContext.Provider value={{ darkMode, setDarkMode }}>
+            <ColorModeContext.Provider value={darkMode}>
             <BrowserRouter>
                 <header>
                 <div className="roger-header-container">

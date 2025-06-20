@@ -71,11 +71,7 @@ export const useDeviceContext = () => {
     return context;
 };
 // ColorModeContext: For light/dark mode
-export interface ColorModeContextType {
-    darkMode: boolean;
-    setDarkMode: Dispatch<SetStateAction<boolean>>;
-}
-export const ColorModeContext = createContext<ColorModeContextType | undefined>(undefined);
+export const ColorModeContext = createContext<boolean | undefined>(undefined);
 export const useColorModeContext = () => {
     const context = useContext(ColorModeContext);
     if (context === undefined) {
