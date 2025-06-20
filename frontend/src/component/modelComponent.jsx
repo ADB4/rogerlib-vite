@@ -1,26 +1,22 @@
 import * as React from "react"
 import { useState, useEffect, useRef, useLayoutEffect, useMemo, useReducer } from "react";
 import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useCameraContext, useModelContext, useDeviceContext } from "../context/galleryContext";
-import { useDevice } from "../hooks/useDevice";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import {
     Environment,
     OrthographicCamera,
     Html,
     useProgress,
-    Wireframe,
     useGLTF,
     useTexture,
     CameraControls,
     CameraControlsImpl,
-    PerspectiveCamera,
-    ScrollControls
+
     } from "@react-three/drei";
 
 import * as THREE from 'three';
 import { Suspense } from "react";
 
-const { ACTION } = CameraControlsImpl;
 /*
 ModelViewerComponent
 Takes input: {item}
@@ -43,9 +39,12 @@ function reducer(state, action) {
             return state
     }
 }
+
 export default function ModelViewerComponent(props) {
     const model = useModelContext();
-    const { darkMode, setDarkMode } = useColorModeContext();
+    const darkMode = useColorModeContext();
+    const compactView = useDeviceContext();
+
     const [activeModels, setActiveModels] = useState([]);
     const [activeTextureSet, setActiveTextureSet] = useState([]);
     const [viewState, dispatch] = useReducer(reducer, {
@@ -59,10 +58,8 @@ export default function ModelViewerComponent(props) {
         autoRotate: true,
         speed: 1.0,
     });
-    const compactView = useDeviceContext();
+
     const cameraControlRef = useRef();
-
-
     const DEG45 = Math.PI / 4;
     const viewContainerStyle = {
         backgroundColor: darkMode ? "transparent":"white",
@@ -111,7 +108,6 @@ export default function ModelViewerComponent(props) {
         <>
         <ViewerStateContext.Provider value={viewState}>
             <ViewerDashboardComponent outData={handleConfigUpdate}/>
-
             <div className="model-view-controller">
             {compactView && (
                 <div className="model-view-polycount">
@@ -134,7 +130,6 @@ export default function ModelViewerComponent(props) {
                 </>
             )}
             </div>
-
             <div className="model-view-module" style={viewContainerStyle}>
             {model && (
                 <Canvas>
@@ -149,14 +144,11 @@ export default function ModelViewerComponent(props) {
                             {!compactView && (
                             <StandardCameraComponent distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
                             )}
-   
                         </CameraContext.Provider>
                         </group>
-
                 </Suspense>
                 </Canvas>
             )}
-
             </div>
         </ViewerStateContext.Provider>
         </> 
@@ -165,7 +157,6 @@ export default function ModelViewerComponent(props) {
 
 export function StandardCameraComponent(props) {
     const {camera} = useThree();
-
     const cameraRef = useRef();
 
     return (
@@ -188,7 +179,6 @@ export function StandardCameraComponent(props) {
             position={[200,90,200]}
         />
         </>
-
     )
 }
 export function RotatingCameraComponent(props) {
@@ -196,6 +186,7 @@ export function RotatingCameraComponent(props) {
     const [rotation, setRotation] = useState(0);
 
     const cameraRef = useRef();
+
     useFrame((_, delta) => {
         setRotation((prevRotation) => prevRotation + (delta / 2));
         camera.position.x = Math.sin(rotation) * props.distance;
@@ -224,7 +215,6 @@ export function RotatingCameraComponent(props) {
             position={[200,90,200]}
         />
         </>
-
     )
 }
 
@@ -333,12 +323,9 @@ export function TextureLoaderComponent(props) {
                     roughnessMap={roughnessMap}
                     metalnessMap={metalnessMap}
                 />
-
             </>
         )}
-
         </>
-
     )
 }
 
@@ -379,19 +366,14 @@ export function TextureWithAlphaLoaderComponent(props) {
                     alphaMap={alphaMap}
                     transparent={true}
                 />
-
             </>
         )}
-
         </>
-
     )
 }
 
 export function LightingComponent() {
     const view = useViewerStateContext();
-    const [ custom, setCustom ] = useState(false);
-    const [ texture, setTexture ] = useState("https://d2fhlomc9go8mv.cloudfront.net/static/hdri/rural_asphalt_road_256p.exr");
 
     return (
         <>
@@ -405,7 +387,6 @@ export function LightingComponent() {
             )}
             </>
         )}
-
         </>
     )
 }
@@ -520,8 +501,8 @@ export function ViewerDashboardComponent({ outData }) {
     )}
     </>
     );
-
 }
+
 export function CompactLODSelectorComponent({inData, outData}) {
     const view = useViewerStateContext();
     const parameters = useViewerOptionsContext();
@@ -572,11 +553,11 @@ export function CompactLODSelectorComponent({inData, outData}) {
                         +
                     </button>
                 </div>
-
             </div>
         </>
     );
 }
+
 export function DashboardSelectorComponent({ inData, outData }) {
     const view = useViewerStateContext();
     const parameters = useViewerOptionsContext();
@@ -682,6 +663,7 @@ export function SelectorToggleComponent({ inData, outData }) {
         </div>
     )
 }
+
 export function SelectorComponent({ inData, outData }) {
     const view = useViewerStateContext();
     const selector = useSelectorContext();
@@ -769,4 +751,3 @@ export function ColorSelectorComponent({ inData, outData}) {
         </>
     );
 }
-
