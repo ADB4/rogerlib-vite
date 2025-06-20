@@ -55,7 +55,7 @@ export default function CntctComponent({ outData }) {
             'beanColors': ["white","black"],
             'beanTextColors': ["black","white"],
         };
-        outData(true, data);
+        outData(data);
     }, []);
     const blackwhite = darkMode ? "black":"white";
     const whiteblack = darkMode ? "#d4d4d4":"black";

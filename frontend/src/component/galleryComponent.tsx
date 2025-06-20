@@ -76,7 +76,7 @@ export default function GalleryComponent({ outData }) {
             'beanColors': ["white","black"],
             'beanTextColors': ["black","white"],
         };
-        outData(false, data);
+        outData(data);
     }, []);
     useEffect(() => {
         let ignoreStaleRequest = false;

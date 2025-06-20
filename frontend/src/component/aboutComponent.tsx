@@ -16,7 +16,7 @@ export default function AboutComponent({ outData }) {
             'beanColors': ["white","black"],
             'beanTextColors': ["black","white"],
         };
-        outData(true, data);
+        outData(data);
     }, []);
     const aboutContainer: React.CSSProperties = {
         color: darkMode ? "white":"black",

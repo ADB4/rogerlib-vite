@@ -22,7 +22,6 @@ export default function DetailContainerComponent({ outData }) {
     }
     let exitButtonStyle = {};
     
-    // height is image resolution + height of view dashboard (8rem) + height of item header (6rem)
     // mobile view
     exitButtonStyle = compactExitButton;
     const modelDetailContainer: React.CSSProperties = {

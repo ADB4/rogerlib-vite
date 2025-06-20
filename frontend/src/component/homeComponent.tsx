@@ -14,7 +14,7 @@ export default function HomeComponent({ outData }) {
             'beanColors': ["white","black"],
             'beanTextColors': ["black","white"],
         };
-        outData(true, data);
+        outData(data);
     }, []);
     return (
     <>
