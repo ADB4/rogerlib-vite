@@ -109,11 +109,9 @@ export default function ModelViewerComponent(props) {
         <ViewerStateContext.Provider value={viewState}>
             <ViewerDashboardComponent outData={handleConfigUpdate}/>
             <div className="model-view-controller">
-            {compactView && (
                 <div className="model-view-polycount">
                     <p>{model.polycount[viewState.lod]} TRIANGLES</p>
                 </div>
-            )}
             {!compactView && (
                 <>
                 <button className="model-view-rotate-button"
