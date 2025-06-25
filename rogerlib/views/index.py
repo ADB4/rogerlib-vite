@@ -17,11 +17,6 @@ def show_about():
 def show_cntct():
     return flask.render_template("index.html")
 
-@app.route('/changelog', methods=['GET'])
-@cross_origin()
-def show_changelog():
-    return flask.render_template("index.html")
-
 @app.route('/gallery', methods=['GET'])
 @cross_origin()
 def show_gallery():

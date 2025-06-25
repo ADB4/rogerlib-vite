@@ -39,7 +39,7 @@ def get_item(itemcode):
     """Return item from itemcode"""
     ct = datetime.datetime.now()
 
-    model = fetch_json_s3(str.format("models/json/{0}.json"))
+    model = fetch_json_s3(str.format("models/json/{0}.json",itemcode))
     # model = fetch_one_from_json(itemcode.lower())
 
     context = {

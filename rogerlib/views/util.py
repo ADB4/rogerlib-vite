@@ -20,12 +20,14 @@ exclude = ['.DS_Store']
 def fetch_download(itemcode):
     s3_client = boto3.client('s3')
     bucket = rogerlib.app.config["AWS_S3_DOWNLOAD_BUCKET"]
+
+    # security by obfuscation / security by inconvenience
     hashInput_identifier = str.format("assets_{0}",itemcode)
     hash_identifier = hashlib.sha3_256(hashInput_identifier.encode())
     identifier_digest = hash_identifier.hexdigest()
     identifier = identifier_digest[:16]
     key = str.format("assets/rogerlib_{0}.zip",identifier_digest[:16])
-    print(str.format("Downloading from S3: {0} == {1}",itemcode,identifier_digest[:16]))
+    # print(str.format("Downloading from S3: {0} == {1}",itemcode,identifier_digest[:16]))
 
     file = s3_client.get_object(Bucket=bucket, Key=key)
     generated_filename = str.format("rogerlibrary_{0}.zip", identifier)
@@ -117,6 +119,7 @@ def fetch_obfuscated_path(model):
                                     itemcode_digest[:16])
     return hashedObjectPath
 
+# postgresql database not currently used
 def parse_db(models):
     result = []
     for model in models:
@@ -231,7 +234,7 @@ def fetch_item_images(resolution, itemcode):
     }
     return result
 
-
+# postgresql database not currently used
 # Fetch single item from db and return
 def fetch_one(itemcode):
     # connect to db
@@ -255,7 +258,8 @@ def fetch_one_from_json(itemcode):
     for model in result:
         if model['itemcode'] == itemcode:
             return parse_item(model)
-    
+
+# postgresql database not currently used
 # Fetch all items from db, return a list
 def fetch_all():
     cur = rogerlib.model.get_db()
@@ -314,6 +318,7 @@ def fetch_categories_json():
             categoryMap[cat].append(subcat)
     return categoryMap
 
+# postgresql database not currently used
 # given a list of models, get all categories
 def fetch_categories():
     # connect to db
