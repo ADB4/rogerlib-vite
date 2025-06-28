@@ -79,19 +79,10 @@ export default function DetailContainerComponent({ outData }) {
         )}
         {!compactView && (
         <div style={modelDetailContainer} id="model-detail-standard-outer">
-            <div className="exit-button-container" style={exitButtonContainer}>
-                <div className="exit-button" style={exitButtonStyle} onClick={() => {handleClose()}}>
-                        <p style={exitButtonText}>CLOSE</p>
-                </div>
-            </div>
             <div className="model-detail-standard-inner">
                 <>
                     <div id="model-detail-standard-left">
-                        <ModelViewerComponent/>
-                    </div>
-                    <div id="model-detail-standard-right">
-                        <DetailHeaderComponent/>
-                        <DetailDescriptionComponent/>
+                        <ModelViewerComponent outData={handleClose}/>
                     </div>
                 </>
             </div>
@@ -102,6 +93,11 @@ export default function DetailContainerComponent({ outData }) {
     )
 }
 
+/*
+                    <div id="model-detail-standard-right">
+                        <DetailHeaderComponent/>
+                    </div>
+*/
 export function DetailHeaderComponent() {
     const compactView = useDevice();
     const model = useModelContext();

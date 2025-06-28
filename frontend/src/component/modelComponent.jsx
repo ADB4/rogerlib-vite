@@ -37,7 +37,7 @@ function reducer(state, action) {
     }
 }
 
-export default function ModelViewerComponent() {
+export default function ModelViewerComponent({ outData }) {
     const model = useModelContext();
     const darkMode = useColorModeContext();
     const compactView = useDeviceContext();
@@ -62,6 +62,13 @@ export default function ModelViewerComponent() {
         backgroundColor: darkMode ? "transparent":"white",
     };
 
+    const exitButtonContainer = {
+        backgroundColor: darkMode ? "black":"#c2c2c2",
+        border: darkMode? "1px solid #292929":"1px solid #bdbdbd",
+    };
+    const exitButtonText = {
+        color: darkMode? "white":"white",
+    };
     function handleConfigUpdate(data) {
         // construct new active image url
         
@@ -99,18 +106,17 @@ export default function ModelViewerComponent() {
             };
             dispatch({type: 'update', data: initialstate});
         }
-    }, []);
+    }, [outData]);
 
     return (
         <>
         <ViewerStateContext.Provider value={viewState}>
-            <ViewerDashboardComponent outData={handleConfigUpdate}/>
+        {!compactView && (
+        <>
             <div className="model-view-controller">
                 <div className="model-view-polycount">
                     <p>{model.polycount[viewState.lod]} TRIANGLES</p>
                 </div>
-            {!compactView && (
-                <>
                 <button className="model-view-rotate-button"
                         onClick={() => {cameraControlRef.current?.rotate(DEG45, 0, true)}}>
                             <p>ROTATE THETA 45DEG</p>
@@ -122,8 +128,12 @@ export default function ModelViewerComponent() {
                             }}>
                             <p>RESET VIEW</p>
                 </button>
-                </>
-            )}
+                <div className="exit-button-container" style={exitButtonContainer}>
+                    <div className="exit-button" 
+                         onClick={() => {outData()}}>
+                            <p style={exitButtonText}>CLOSE</p>
+                    </div>
+                </div>
             </div>
             <div className="model-view-module" style={viewContainerStyle}>
             {model && (
@@ -133,31 +143,33 @@ export default function ModelViewerComponent() {
                         <LightingComponent />
                         <group>
                         <CameraContext.Provider value={cameraContext} >
-                            {compactView && (
-                            <RotatingCameraComponent distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
-                            )}
-                            {!compactView && (
-                            <StandardCameraComponent distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
-                            )}
+                            <StandardCameraComponent distance={200} zoom={model.zoom} camControls={cameraControlRef}/>
                         </CameraContext.Provider>
                         </group>
                 </Suspense>
                 </Canvas>
             )}
             </div>
+        </>
+        )}
         </ViewerStateContext.Provider>
         </> 
     )
 }
 
+/*
+                            {compactView && (
+                            <RotatingCameraComponent distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
+                            )}
+
+*/
 export function StandardCameraComponent(props) {
-    const {camera} = useThree();
+    const { camera } = useThree();
     const cameraRef = useRef();
 
     return (
         <>
         <CameraControls 
-            makeDefault
             enabled={true}
             ref={props.camControls}
             camera={camera} />
@@ -458,6 +470,7 @@ export function ViewerDashboardComponent({ outData }) {
             <div id="dashboard">
                 <ViewerOptionsContext.Provider value={optionsGlossary}>
                     <div className="dashboard-fixed-container">
+                        <SelectorToggleComponent inData={wireframeSelector} outData={handleClick}></SelectorToggleComponent>   
                         <DashboardSelectorComponent inData={shaderSelector} outData={handleClick}/>
                         <DashboardSelectorComponent inData={materialSelector} outData={handleClick}/>
                     </div>
@@ -465,7 +478,6 @@ export function ViewerDashboardComponent({ outData }) {
                         <DashboardSelectorComponent inData={lodSelector} outData={handleClick}/>
                         <ColorSelectorComponent inData={colorSelector} outData={handleClick}/>
                     </div>
-                    <SelectorToggleComponent inData={wireframeSelector} outData={handleClick}></SelectorToggleComponent>
                 </ViewerOptionsContext.Provider>
             </div>
         </div>
