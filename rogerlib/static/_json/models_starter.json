@@ -1,0 +1,519 @@
+{
+    "models": [
+        {
+            "itemcode": "barrier0",
+            "itemname": "Traffic Barrier",
+            "category": "props",
+            "subcategory": "track_elements",
+            "material": "Thermal Plastic",
+            "models": [["barrier0_lod0.glb"],
+                        ["barrier0_lod1.glb"]],
+            "zoom": "50",
+            "texturemap": {"lod0": "0","lod1":"0"},
+            "texturesets": [[
+                {
+                    "id": "barrier0_lod0",
+                    "alpha": "false",
+                    "displacement": "false",
+                    "maps": ["barrier0_lod0_color_red.jpg",
+                             "barrier0_lod0_color_white.jpg",
+                             "barrier0_lod0_metallic.jpg",
+                             "barrier0_lod0_normal.jpg",
+                             "barrier0_lod0_roughness.jpg"]
+                }],
+                [{
+                    "id": "barrier0_lod1",
+                    "alpha": "false",
+                    "displacement": "false",
+                    "maps": ["barrier0_lod1_color_red.jpg",
+                             "barrier0_lod1_color_white.jpg",
+                             "barrier0_lod1_metallic.jpg",
+                             "barrier0_lod1_normal.jpg",
+                             "barrier0_lod1_roughness.jpg"]
+                }]
+            ],
+            "colors": "Red(red),White(white)",
+            "lodcount": "2708, 116",
+            "description": "BARRIER0 is a traffic barrier that's ready to tackle crowd control. Made of moulded polyethylene plastic, it's highly visible and fade-resistant.",
+            "creatornote": "This item comes in two LODs. At 116 triangles, it is suitable for use in physics simulations.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "barrier1",
+            "itemname": "Impact Absorption Barrier",
+            "category": "props",
+            "subcategory": "track_elements",
+            "material": "Canvas",
+            "models": [["barrier1_lod0.glb"]],
+            "zoom": "30",
+            "texturemap": {"lod0": "0"},
+            "texturesets": [[
+                {
+                    "id": "barrier1_lod0",
+                    "alpha": "false",
+                    "displacement": "false",
+                    "maps": ["barrier1_lod0_color_amber.jpg",
+                             "barrier1_lod0_color_black.jpg",
+                             "barrier1_lod0_color_blue.jpg",
+                             "barrier1_lod0_color_gray.jpg",
+                             "barrier1_lod0_color_orange.jpg",
+                             "barrier1_lod0_color_white.jpg",
+                             "barrier1_lod0_metallic.jpg",
+                             "barrier1_lod0_normal.jpg",
+                             "barrier1_lod0_roughness.jpg"]
+                }]
+            ],
+            "colors": "Orange(orange),Amber(amber),Black(black),White(white),Blue(blue),Grey(grey)",
+            "lodcount": "12",
+            "description": "BARRIER1 is a safety barrier designed for high-speed impacts. A flame-retardant PVC cover protects against the elements, while foam construction makes it a suitable first line of defense.",
+            "creatornote": "One of the few models in this library that used ZBrush in its creation. A single LOD is provided primarily because it's intended to be used as a physics object. To add geometry, convert to 6 quads, add edge loops as needed. Use noise displacement to create variations in shape.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "barrier2",
+            "itemname": "Sound Insulation Barrier",
+            "category": "props",
+            "subcategory": "track_elements",
+            "material": "Wood",
+            "models": [["barrier2_lod0.glb"],
+                        ["barrier2_lod1.glb"],
+                        ["barrier2_lod2.glb"]],
+            "zoom": "12",
+            "texturemap": {"lod0": "0","lod1":"1","lod2":"1"},
+            "texturesets": [[
+                {
+                    "id": "barrier2_lod0",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["barrier2_lod0_color_standard.jpg",
+                             "barrier2_lod0_height.jpg",
+                             "barrier2_lod0_metallic.jpg",
+                             "barrier2_lod0_normal.jpg",
+                             "barrier2_lod0_roughness.jpg"]
+                }],
+                [{
+                    "id": "barrier2_lod1",
+                    "alpha": "false",
+                    "maps": ["barrier2_lod1_color_standard.jpg",
+                             "barrier2_lod1_height.jpg",
+                             "barrier2_lod1_metallic.jpg",
+                             "barrier2_lod1_normal.jpg",
+                             "barrier2_lod1_roughness.jpg"]
+                }]
+            ],
+            "colors": "Standard(standard)",
+            "lodcount": "2664,1345,197",
+            "description": "BARRIER2 is a large noise barrier composed of a wood frame and PVC panels. It both absorbs and deflects sound for nearby residents.",
+            "creatornote": "The wooden 'poles' of this model extend past the base of the panels which affords the user more margin when placing it on sloped ground.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "bollar0",
+            "itemname": "Bollard",
+            "category": "props",
+            "subcategory": "track_elements",
+            "material": "Powder-Coated Steel",
+            "models": [["bollar0_lod0.glb"],
+                       ["bollar0_lod1.glb"],
+                       ["bollar0_lod2.glb"],
+                       ["bollar0_lod3.glb"]],
+            "zoom": "75",
+            "texturemap": {"lod0": "0","lod1":"0","lod2":"0","lod3":"0"},
+            "texturesets": [[
+                {
+                    "id": "bollar0_lod0",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["bollar0_lod0_color_yellow.jpg",
+                             "bollar0_lod0_height.jpg",
+                             "bollar0_lod0_metallic.jpg",
+                             "bollar0_lod0_normal.jpg",
+                             "bollar0_lod0_roughness.jpg"]
+                }]
+            ],
+            "colors": "Hazard Yellow(yellow)",
+            "lodcount": "2512,1264,920,468",
+            "description": "BOLLAR0 is a traffic bollard that provides safety from vehicles and other moving hazards. With a concrete filling and a powder-coated steel exterior, it features high visibility along with protection from fade and rust. Includes two variations: standard, and U-shaped.",
+            "creatornote": "In German, the color 'Hazard Yellow' translates to 'GefÃƒÂ¤hrliches Gelb'.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "gsfp0",
+            "itemname": "Fuel Dispenser",
+            "category": "props",
+            "subcategory": "commercial_appliances",
+            "material": "Steel Construction",
+            "models": [["gsfp0_lod0_primary.glb",
+                        "gsfp0_lod0_emission.glb"],
+                       ["gsfp0_lod1_primary.glb",
+                        "gsfp0_lod1_emission.glb"],
+                       ["gsfp0_lod2_primary.glb",
+                        "gsfp0_lod2_emission.glb"],
+                       ["gsfp0_lod3.glb"]],
+            "zoom": "55",
+            "texturemap": {"lod0": "0","lod1":"0","lod2":"0","lod3":"1"},
+            "texturesets": [[
+                {
+                    "id": "gsfp0_lod0_primary",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["gsfp0_lod0_primary_color_standard.jpg",
+                             "gsfp0_lod0_primary_height.jpg",
+                             "gsfp0_lod0_primary_metallic.jpg",
+                             "gsfp0_lod0_primary_normal.jpg",
+                             "gsfp0_lod0_primary_roughness.jpg"]
+                },
+                {
+                    "id": "gsfp0_lod0_emission",
+                    "alpha": "false",
+                    "displacement": "false",
+                    "maps": ["gsfp0_lod0_emission_color_standard.jpg",
+                             "gsfp0_lod0_emission_metallic.jpg",
+                             "gsfp0_lod0_emission_normal.jpg",
+                             "gsfp0_lod0_emission_roughness.jpg"]
+                }],
+                [{
+                    "id": "gsfp0_lod3",
+                    "alpha": "false",
+                    "displacement": "false",
+                    "maps": ["gsfp0_lod3_color_standard.jpg",
+                             "gsfp0_lod3_metallic.jpg",
+                             "gsfp0_lod3_normal.jpg",
+                             "gsfp0_lod3_roughness.jpg"]
+                }
+                ]
+            ],
+            "colors": "True Blue(standard)",
+            "lodcount": "34162,18204,8616,1374",
+            "description": "GSFP0 is a fuel dispenser for convenience stores and fuel businesses. Its features durable steel construction that is ready for years of use in all conditions, and an intuitive ATM-style user interface supports standard and contactless payment methods.",
+            "creatornote": "",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "guard0",
+            "itemname": "Guardrail Set",
+            "category": "props",
+            "subcategory": "track_elements",
+            "material": "Galvanized Steel",
+            "models": [["guard0_lod0_primary.glb"],
+                       ["guard0_lod0_secondary.glb"]],
+            "zoom": "30",
+            "texturemap": {"lod0": "0"},
+            "texturesets": [[
+                {
+                    "id": "guard0_lod0_primary",
+                    "alpha": "false",
+                    "displacement": "false",
+                    "maps": ["guard0_lod0_primary_color_white.jpg",
+                             "guard0_lod0_primary_metallic.jpg",
+                             "guard0_lod0_primary_normal.jpg",
+                             "guard0_lod0_primary_roughness.jpg"]
+                },
+                {
+                    "id": "guard0_lod0_secondary",
+                    "alpha": "false",
+                    "displacement": "false",
+                    "maps": ["guard0_lod0_secondary_color_white.jpg",
+                             "guard0_lod0_secondary_metallic.jpg",
+                             "guard0_lod0_secondary_normal.jpg",
+                             "guard0_lod0_secondary_roughness.jpg"]
+                }]
+            ],
+            "colors": "Steel(steel)",
+            "lodcount": "2998",
+            "description": "GUARD0 is a guardrail that is ideal for defining outer track boundaries. Hot-dipped galvanized coating protects the steel construction against corrosion and weather fading. This modular set comprises of an endpiece(two variations), midsection(four variations), and compact section(two variations).",
+            "creatornote": "LOD1 is modeled, textured, and coming soon.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "tirew0",
+            "itemname": "Tire Wall (Set of Four)",
+            "category": "props",
+            "subcategory": "track_elements",
+            "material": "Rubber",
+            "models": [["tirew0_lod0.glb"],
+                       ["tirew0_lod1.glb"],
+                       ["tirew0_lod2.glb"]],
+            "zoom": "75",
+            "texturemap": {"lod0": "0","lod1":"0","lod2":"0"},
+            "texturesets": [[
+                {
+                    "id": "tirew0_lod0",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["tirew0_lod0_color_black.jpg",
+                             "tirew0_lod0_color_white.jpg",
+                             "tirew0_lod0_height.jpg",
+                             "tirew0_lod0_metallic.jpg",
+                             "tirew0_lod0_normal.jpg",
+                             "tirew0_lod0_roughness.jpg"]
+                }]
+            ],
+            "colors": "Black(black),White(white)",
+            "lodcount": "7104, 2880, 1440",
+            "description": "TIREW0 is a protective barrier constructed from used tires. Tire walls are commonly used on racetracks to absorb energy from collisions and prevent vehicles from crossing track boundaries. To maximize effectiveness, layer between steel guardrail and padded impact barriers.",
+            "creatornote": "To create variations in shape, use proportional editing to rotate the edge loops along the tread of the tire.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "trsh0a",
+            "itemname": "Square Trash Bin",
+            "category": "props",
+            "subcategory": "trash",
+            "material": "Polyethylene Plastic",
+            "models": [["trsh0a_lod0.glb"],
+                        ["trsh0a_lod1.glb"],
+                        ["trsh0a_lod2.glb"],
+                        ["trsh0a_lod3.glb"],
+                        ["trsh0a_lod4.glb"]],
+            "zoom": "75",
+            "texturemap": {"lod0": "0","lod1":"0","lod2":"1","lod3":"1","lod4":"1"},
+            "texturesets": [[
+                {
+                    "id": "trsh0a_lod0",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["trsh0a_lod0_color_black.jpg",
+                             "trsh0a_lod0_height.jpg",
+                             "trsh0a_lod0_metallic.jpg",
+                             "trsh0a_lod0_normal.jpg",
+                             "trsh0a_lod0_roughness.jpg"]
+                }],
+                [{
+                    "id": "trsh0a_lod2",
+                    "alpha": "false",
+                    "maps": ["trsh0a_lod2_color_black.jpg",
+                             "trsh0a_lod2_metallic.jpg",
+                             "trsh0a_lod2_normal.jpg",
+                             "trsh0a_lod2_roughness.jpg"]
+                }
+                ]
+            ],
+            "colors": "Black(black)",
+            "lodcount": "14832,7840,2450,1394,112",
+            "description": "TRSH0A is a waste container with a capacity of 42 gallons. It is constructed of a durable polyethylene plastic and is suited for use in indoor and outdoor spaces.",
+            "creatornote": "loved making this",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "trsh0b",
+            "itemname": "Round Trash Bin",
+            "category": "props",
+            "subcategory": "trash",
+            "material": "Polyethylene Plastic",
+            "models": [["trsh0b_lod0.glb"],
+                        ["trsh0b_lod1.glb"],
+                        ["trsh0b_lod2.glb"],
+                        ["trsh0b_lod3.glb"]],
+            "zoom": "75",
+            "texturemap": {"lod0": "0","lod1":"0","lod2":"1","lod3":"1"},
+            "texturesets": [[
+                {
+                    "id": "trsh0b_lod0",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["trsh0b_lod0_color_black.jpg",
+                             "trsh0b_lod0_height.jpg",
+                             "trsh0b_lod0_metallic.jpg",
+                             "trsh0b_lod0_normal.jpg",
+                             "trsh0b_lod0_roughness.jpg"]
+                }],
+                [{
+                    "id": "trsh0b_lod2",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["trsh0b_lod2_color_black.jpg",
+                             "trsh0b_lod2_height.jpg",
+                             "trsh0b_lod2_metallic.jpg",
+                             "trsh0b_lod2_normal.jpg",
+                             "trsh0b_lod2_roughness.jpg"]
+                }]
+            ],
+            "colors": "Black(black)",
+            "lodcount": "8832,4972,1004,680",
+            "description": "TRSH0B is a commercial waste receptacle that features a 32 gallon capacity and durable polyethylene construction. Form follows function, as the dual venting channels are designed to facilitate lifting out liners.",
+            "creatornote": "Fully modeled bottom and interior.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "et0",
+            "itemname": "Transmission Tower",
+            "category": "architecture",
+            "subcategory": "electrical",
+            "material": "Steel Lattice Framework",
+            "models": [["et0_lod0_primary.glb",
+                        "et0_lod0_secondary.glb"]],
+            "zoom": "6",
+            "texturemap": {"lod0": "0"},
+            "texturesets": [[
+                {
+                    "id": "et0_lod0_primary",
+                    "alpha": "true",
+                    "displacement": "false",
+                    "maps": ["et0_lod0_primary_color_white.jpg",
+                             "et0_lod0_primary_alpha.jpg",
+                             "et0_lod0_primary_metallic.jpg",
+                             "et0_lod0_primary_normal.jpg",
+                             "et0_lod0_primary_roughness.jpg"]
+                },
+                {
+                    "id": "et0_lod0_secondary",
+                    "alpha": "false",
+                    "displacement": "false",
+                    "maps": ["et0_lod0_secondary_color_white.jpg",
+                             "et0_lod0_secondary_metallic.jpg",
+                             "et0_lod0_secondary_normal.jpg",
+                             "et0_lod0_secondary_roughness.jpg"]
+                }]
+            ],
+            "colors": "White(white)",
+            "lodcount": "5776",
+            "description": "ET0 transmission tower and included overhead power lines carry electrical power from generating stations to electrical substations, which in turn deliver power to consumers.",
+            "creatornote": "This model makes use of an alpha map in order to optimize geometry.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        },
+        {
+            "itemcode": "ble0",
+            "itemname": "Fixed Bleacher Seating",
+            "category": "buildings",
+            "subcategory": "outdoors",
+            "material": "Steel",
+            "models": [["ble0_lod0_foundation.glb",
+                        "ble0_lod0_primary.glb",
+                        "ble0_lod0_quaternary.glb",
+                        "ble0_lod0_railing.glb",
+                        "ble0_lod0_secondary.glb",
+                        "ble0_lod0_tertiary.glb"
+                        ],
+                       ["ble0_lod1_primary.glb",
+                        "ble0_lod1_secondary.glb",
+                        "ble0_lod1_tertiary.glb",
+                        "ble0_lod1_railing.glb"]],
+            "zoom": "4",
+            "texturemap": {"lod0": "0", "lod1": "1"},
+            "texturesets": [[
+                {
+                    "id": "ble0_lod0_foundation",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["ble0_lod0_foundation_color_standard.jpg",
+                             "ble0_lod0_foundation_height.jpg",
+                             "ble0_lod0_foundation_metallic.jpg",
+                             "ble0_lod0_foundation_normal.jpg",
+                             "ble0_lod0_foundation_roughness.jpg"]
+                },
+                {
+                    "id": "ble0_lod0_primary",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["ble0_lod0_primary_color_standard.jpg",
+                             "ble0_lod0_primary_height.jpg",
+                             "ble0_lod0_primary_metallic.jpg",
+                             "ble0_lod0_primary_normal.jpg",
+                             "ble0_lod0_primary_roughness.jpg"]
+                },
+                {
+                    "id": "ble0_lod0_quaternary",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["ble0_lod0_quaternary_color_standard.jpg",
+                             "ble0_lod0_quaternary_height.jpg",
+                             "ble0_lod0_quaternary_metallic.jpg",
+                             "ble0_lod0_quaternary_normal.jpg",
+                             "ble0_lod0_quaternary_roughness.jpg"]
+                },
+                {
+                    "id": "ble0_lod0_railing",
+                    "alpha": "true",
+                    "displacement": "true",
+                    "maps": ["ble0_lod0_railing_color_standard.jpg",
+                             "ble0_lod0_railing_height.jpg",
+                             "ble0_lod0_railing_metallic.jpg",
+                             "ble0_lod0_railing_normal.jpg",
+                             "ble0_lod0_railing_roughness.jpg",
+                             "ble0_lod0_railing_alpha.jpg"]
+                },
+                {
+                    "id": "ble0_lod0_secondary",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["ble0_lod0_secondary_color_standard.jpg",
+                             "ble0_lod0_secondary_height.jpg",
+                             "ble0_lod0_secondary_metallic.jpg",
+                             "ble0_lod0_secondary_normal.jpg",
+                             "ble0_lod0_secondary_roughness.jpg"]
+                },
+                {
+                    "id": "ble0_lod0_tertiary",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["ble0_lod0_tertiary_color_standard.jpg",
+                             "ble0_lod0_tertiary_height.jpg",
+                             "ble0_lod0_tertiary_metallic.jpg",
+                             "ble0_lod0_tertiary_normal.jpg",
+                             "ble0_lod0_tertiary_roughness.jpg"]
+                }
+                ],
+                [{
+                    "id": "ble0_lod1_primary",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["ble0_lod1_primary_color_standard.jpg",
+                             "ble0_lod1_primary_height.jpg",
+                             "ble0_lod1_primary_metallic.jpg",
+                             "ble0_lod1_primary_normal.jpg",
+                             "ble0_lod1_primary_roughness.jpg"]
+                },
+                {
+                    "id": "ble0_lod1_secondary",
+                    "alpha": "false",
+                    "displacement": "true",
+                    "maps": ["ble0_lod1_secondary_color_standard.jpg",
+                             "ble0_lod1_secondary_height.jpg",
+                             "ble0_lod1_secondary_metallic.jpg",
+                             "ble0_lod1_secondary_normal.jpg",
+                             "ble0_lod1_secondary_roughness.jpg"]
+                },
+                {
+                    "id": "ble0_lod1_tertiary",
+                    "alpha": "true",
+                    "displacement": "true",
+                    "maps": ["ble0_lod1_tertiary_color_standard.jpg",
+                             "ble0_lod1_tertiary_height.jpg",
+                             "ble0_lod1_tertiary_metallic.jpg",
+                             "ble0_lod1_tertiary_normal.jpg",
+                             "ble0_lod1_tertiary_roughness.jpg",
+                             "ble0_lod1_tertiary_alpha.jpg"]
+                },
+                {
+                    "id": "ble0_lod1_railing",
+                    "alpha": "true",
+                    "displacement": "true",
+                    "maps": ["ble0_lod1_railing_color_standard.jpg",
+                             "ble0_lod1_railing_height.jpg",
+                             "ble0_lod1_railing_metallic.jpg",
+                             "ble0_lod1_railing_normal.jpg",
+                             "ble0_lod1_railing_roughness.jpg",
+                             "ble0_lod1_railing_alpha.jpg"]
+                }
+            ]
+            ],
+            "colors": "Tsukuba Blue(standard)",
+            "lodcount": "30634,4734",
+            "description": "A permanent entertainment seating solution constructed from recycled steel shipping containers that is durable and resistant to corrosion.",
+            "creatornote": "This model makes use of an alpha map in order to optimize geometry.",
+            "shader": "pbr",
+            "version": "0.1.0"
+        }
+    ]
+}

@@ -180,6 +180,11 @@ def parse_item(model):
     previewPath = str.format("{0}/img/512p/{1}_{2}_preview.png",objectPath,category,itemcode.lower())
     imagePath = str.format("{0}/img/1024p/",objectPath)
 
+    hashInput_identifier = str.format("assets_{0}",itemcode)
+    hash_identifier = hashlib.sha3_256(hashInput_identifier.encode())
+    identifier_digest = hash_identifier.hexdigest()
+    identifier = identifier_digest[:16]
+    model['download'] = str.format("rogerlib_{0}.zip",identifier)
    
     model['preview'] = previewPath
     model['imagepath'] = imagePath
@@ -283,7 +288,7 @@ def fetch_all_json():
     return data
 
 def hydrate():
-    data = fetch_json_local("model/_json/models_starter.json")
+    data = fetch_json_local("_json/models_starter.json")
     result = data['models']
     models = []
     for model in result:
