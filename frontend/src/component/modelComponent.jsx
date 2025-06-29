@@ -51,10 +51,6 @@ export default function ModelViewerComponent({ outData }) {
         color: "NULL",
         wireframe: true,
     });
-    const cameraContext = {
-        autoRotate: true,
-        speed: 1.0,
-    };
 
     const cameraControlRef = useRef();
     const DEG45 = Math.PI / 4;
@@ -113,6 +109,7 @@ export default function ModelViewerComponent({ outData }) {
         <ViewerStateContext.Provider value={viewState}>
         {!compactView && (
         <>
+            <ViewerDashboardComponent outData={handleConfigUpdate} />
             <div className="model-view-controller">
                 <div className="model-view-polycount">
                     <p>{model.polycount[viewState.lod]} TRIANGLES</p>
@@ -135,20 +132,16 @@ export default function ModelViewerComponent({ outData }) {
                     </div>
                 </div>
             </div>
-            <div className="model-view-module" style={viewContainerStyle}>
-            {model && (
+            <div className="model-view-container">
+            <>
                 <Canvas>
                 <Suspense fallback={<Loader />}>
                         <GLTFComponent models={activeModels} textures={activeTextureSet} itemcode={model.itemcode}/>
                         <LightingComponent />
-                        <group>
-                        <CameraContext.Provider value={cameraContext} >
-                            <StandardCameraComponent distance={200} zoom={model.zoom} camControls={cameraControlRef}/>
-                        </CameraContext.Provider>
-                        </group>
+                        <StandardCameraComponent distance={200} zoom={model.zoom} camControls={cameraControlRef}/>
                 </Suspense>
                 </Canvas>
-            )}
+            </>
             </div>
         </>
         )}
@@ -234,11 +227,11 @@ export function GLTFComponent(props) {
     const item = useModelContext();
 
     return (
-        <group {...props} dispose={null}>
+        <>
             {props.models.map((model, i) => (
                 <GLTFLoaderComponent key={model} itemcode={item.itemcode} textures={props.textures[i]} filename={model}/>
             ))}
-        </group>
+        </>
     )
 }
 
@@ -248,10 +241,12 @@ itemcode: string
 filename: string
 */
 export function GLTFLoaderComponent(props) {
+    const { gl, camera } = useThree();
     const item = useModelContext();
     const view = useViewerStateContext();
     const { nodes } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/gltf/${props.filename}`);
     const meshRef = useRef();
+    const wfRef = useRef();
 
     // materials
     const materialWF = useRef(new THREE.MeshBasicMaterial({color: 'red', wireframe: true }));
@@ -261,11 +256,13 @@ export function GLTFLoaderComponent(props) {
     const keys = Object.keys(nodes);
     const k = keys[1];
     const geo = nodes[k].geometry;
+
+    useEffect(() => {
+        console.log(gl.info);
+    },[]);
     return (
         <>
-        {view.wireframe == true && (
-            <mesh ref={meshRef} geometry={geo} material={materialWF.current}/>
-        )}
+
         {view.material == "solid" && (
             <>
             <mesh ref={meshRef} geometry={geo} material={materialSolid.current}>
@@ -278,6 +275,7 @@ export function GLTFLoaderComponent(props) {
             </>
         )}
         {view.material == "albedo" && (
+            <>
             <mesh ref={meshRef} geometry={geo}>
                 {props.textures.alpha == 'true' && (
                 <TextureWithAlphaLoaderComponent key={props.key} textures={props.textures} itemcode={item.itemcode}/>
@@ -286,10 +284,18 @@ export function GLTFLoaderComponent(props) {
                 <TextureLoaderComponent key={props.key} textures={props.textures} itemcode={item.itemcode}/>
                 )}
             </mesh>
+            </>
         )}
         </>
     )
 }
+
+/*
+
+        {view.wireframe == true && (
+            <mesh ref={wfRef} geometry={geo} material={materialWF.current}/>
+        )}
+*/
 /*
 props
 maps: string[]

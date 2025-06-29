@@ -81,7 +81,7 @@ export default function DetailContainerComponent({ outData }) {
         <div style={modelDetailContainer} id="model-detail-standard-outer">
             <div className="model-detail-standard-inner">
                 <>
-                    <div id="model-detail-standard-left">
+                    <div id="model-view-container">
                         <ModelViewerComponent outData={handleClose}/>
                     </div>
                 </>
