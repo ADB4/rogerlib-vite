@@ -155,13 +155,11 @@ hr.solid {
     grid-column-end: -1;
     grid-row-start: 1;
     grid-row-end: -1;
-    max-height: 30rem;
-    height: calc(100% - 1rem);
+    height: 100%;
     width: 11rem;
     margin: auto;
-    display: grid;
-    grid-template-rows: auto 10rem;
-    grid-template-columns: auto;
+    display: flex;
+    flex-direction: column;
     z-index: 8;
 }
 .dashboard-container-standard {
@@ -173,11 +171,12 @@ hr.solid {
     outline: 2px solid #e1e7a7;
     color: black;
     height: calc(100% - 2rem);
-    width: 12rem;
+    max-height: 34rem;
+    width: calc(100% - 2rem);
     border-radius: 0.75rem;
     margin: auto;
     margin-right: 1rem;
-    margin-top: 0rem;
+    margin-top: 1rem;
     display: grid;
     grid-template-columns: auto;
     grid-template-rows: auto;
@@ -202,35 +201,26 @@ hr.solid {
     z-index: 9;
 }
 .dashboard-fixed-container {
-    grid-column-start: 1;
-    grid-column-end: -1;
-    grid-row-start: 1;
-    grid-row-end: 2;
     min-width: 10rem;
     width: 100%;
-    max-height: 24rem;
+    min-height: 14rem;
+    max-height: 16rem;
     height: 100%;
-    outline: 1px solid red;
-    margin: auto;
-    margin-left: 0rem;
-    margin-bottom: 0rem;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    align-items: flex-start;
+    row-gap: 1rem;
 }
 .dashboard-flex-container {
-    grid-column-start: 1;
-    grid-column-end: -1;
-    grid-row-start: 2;
-    grid-row-end: -1;
     width: 100%;
     max-width: 10rem;
     height: 100%;
-    outline: 1px solid blue;
+    max-height: 14rem;
     border-radius: 0.5rem;
-    margin: auto;
-    margin-right: 0rem;
     display: flex;
+    margin-top: 2rem;
+    margin-right: auto;
+    margin-left: auto;
     flex-direction: column;
     align-items: flex-start;
     background-color: #f0f0f0;
@@ -1202,7 +1192,7 @@ body {
     grid-row-end: -1;
     display: flex;
     flex-direction: row;
-    width: calc(100% - 4.0rem);
+    width: calc(100% - 2.0rem);
     height: calc(100% - 2.0rem);
     max-width: 72rem;
     min-height: 16rem;
@@ -1211,10 +1201,8 @@ body {
     overflow-y: hidden;
     background-color: white;
     border-radius: 1.5rem;
+    margin: auto;
     margin-top: 1.0rem;
-    margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto;
     box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
     -webkit-transition: 1s ease 0s normal forwards 1 fadeIn;
     transition: 1s ease 0s normal forwards 1 fadeIn;
@@ -1227,7 +1215,6 @@ body {
     grid-row-end: -1;
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
     width: 100%;
     height: 100%;
     max-width: 72rem;
@@ -1237,7 +1224,7 @@ body {
     overflow-y: hidden;
     -webkit-transition: 1s ease 0s normal forwards 1 fadeIn;
     transition: 1s ease 0s normal forwards 1 fadeIn;
-    z-index: 6;
+    z-index: 7
 }
 #model-detail-standard-left {
     flex-grow: 1;
@@ -1724,6 +1711,29 @@ body:not(.loaded) #model-image img {
     height: auto;
     border-radius: 4rem;
 }
+.model-view-header {
+    height: 5rem;
+    margin: auto;
+    margin-left: 0rem;
+}
+.model-view-header h2 {
+    font-family: Swiss721;
+    font-weight: 400;
+    margin-top: 0.25rem;
+    margin-left: 0rem;
+    margin-bottom: 0;
+}
+.model-view-header ul {
+    margin-top: 0.125rem;
+    margin-left: 0rem;
+    padding-left: 0;
+}
+.model-view-header li {
+    font-family: Swiss721;
+    list-style-type: none;
+    font-weight: 200;
+    font-size: 1.0rem;
+}
 .model-view-loading {
     max-width: 54rem;
     width: 32rem;
@@ -1739,7 +1749,6 @@ body:not(.loaded) #model-image img {
 }
 .model-view-polycount {
     height: 1.5rem;
-
     display: flex;
     margin: auto;
     margin-top: 0.1875rem;
@@ -1766,7 +1775,6 @@ body:not(.loaded) #model-image img {
 .model-view-reset-button p,
 .model-view-rotate-button p {
     margin: auto;
-    margin-top: 0.15rem;
     font-family: Swiss721;
     font-size: 1.0rem;
     line-height: 1.0rem;
@@ -1785,37 +1793,70 @@ body:not(.loaded) #model-image img {
     border-radius: 0.75rem;
 }
 #model-view-container {
-    grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: -1;
     width: 100%;
     height: 100%;
     min-width: 16rem;
     min-height: 16rem;
     max-width: 72rem;
     max-height: 56rem;
+    margin: auto;
     display: grid;
     grid-template-columns: auto 14rem;
-    grid-template-rows: 4rem auto;
+    grid-template-rows: 4rem auto 4rem;
     -webkit-transition: 1s ease 0s normal forwards 1 fadeIn;
     -moz-transition: 1s ease 0s normal forwards 1 fadeIn;
     transition: 1s ease 0s normal forwards 1 fadeIn;
 }
+.model-view-information {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 3;
+    grid-row-end: -1;
+    width: calc(100% - 2rem);
+    height: 3rem;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    outline: 1px solid blue;
+    z-index: 9;
+}
 .model-view-module {
-    position: relative;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: -1;
     min-height: 8rem;
     min-width: 8rem;
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 0.5rem);
+    height: calc(100% - 1rem);
+    border-radius: 1.0rem;
     margin: auto;
+    margin-left: 0.5rem;
+    overflow: hidden;
     animation: 1.5s ease 0s normal forwards 1 fadeInDelayed;
     -webkit-animation: 1.5s ease 0s normal forwards 1 fadeInDelayed;
     z-index: 8;
 }
+.model-view-exit {
+    grid-column-start: 2;
+    grid-column-end: -1;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    min-height: 2rem;
+    min-width: 8rem;
+    width: calc(100% - 2rem);
+    height: 3rem;
+    margin: auto;
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: row;
+    column-gap: 0.25rem;
+    justify-content: flex-end;
+    z-index: 9;
+}
 .model-view-controller {
     grid-column-start: 1;
-    grid-column-end: -1;
+    grid-column-end: 2;
     grid-row-start: 1;
     grid-row-end: 2;
     min-height: 2rem;
@@ -1962,7 +2003,7 @@ body:not(.loaded) #model-image img {
     grid-row-start: 1;
     grid-row-end:-1;
     display: flex;
-    border-radius: 1.0rem;
+    border-radius: 0.875rem;
     text-align: center;
     cursor: pointer;
     width: 5.25rem;
@@ -1974,11 +2015,11 @@ body:not(.loaded) #model-image img {
     display: flex;
     margin: auto;
     margin-top: 0.0625rem;
-    border-radius: 0.875rem;
+    border-radius: 0.75rem;
     text-align: center;
     cursor: pointer;
     width: 5.0rem;
-    height: 1.75rem;
+    height: 1.5rem;
     background-color: #eb3d1a;
     border: 1px solid #f25b1f;
     box-shadow: rgba(9, 30, 66, 0.25) 0px 2px 2px, rgba(9, 30, 66, 0.13) 0px 0px 2px 2px;
@@ -1989,7 +2030,7 @@ body:not(.loaded) #model-image img {
     font-family: Swiss721;
     font-weight: 200;
     font-size: 1.0rem;
-    line-height: 1.0rem;
+    line-height: 1.5rem;
 }
 .view-parameters li {
     list-style-type: none;
@@ -2015,14 +2056,9 @@ body:not(.loaded) #model-image img {
     z-index: 7;
 }
 .wireframe-selector-outer {
-    grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 2;
     min-width: 6rem;
     height: 3rem;
     width: 100%;
-    margin: auto;
     margin-left: 0rem;
     display: grid;
     grid-template-columns: auto;
@@ -2049,36 +2085,27 @@ body:not(.loaded) #model-image img {
     z-index: 9;
 }
 #shading-selector {
-    flex-grow: 1;
-    flex-shrink: 2;
-    flex-basis: 8.5rem;
     min-width: 4rem;
     max-width: 8.5rem;
-    height: 8rem;
+    max-height: 6rem;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin: auto;
-    margin-top: 0rem;
-    margin-left: 0rem;
     z-index: 9;
 }
 #material-selector {
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 6.5rem;
     min-width: 4rem;
     max-width: 8.5rem;
     height: 100%;
+    max-height: 6rem;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
-    margin: auto;
-    margin-top: 0rem;
-    margin-left: 0rem;
     z-index: 9;
+
 }
 #lod-selector {
     max-height: 7.5rem;

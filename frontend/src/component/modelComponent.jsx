@@ -111,8 +111,12 @@ export default function ModelViewerComponent({ outData }) {
         <>
             <ViewerDashboardComponent outData={handleConfigUpdate} />
             <div className="model-view-controller">
-                <div className="model-view-polycount">
-                    <p>{model.polycount[viewState.lod]} TRIANGLES</p>
+                <div className="model-view-header">
+                        <h2>{model.itemname.toUpperCase()}</h2>
+                        <ul>
+                            <li>VERSION {model.version}</li>
+                            <li>{model.category.toUpperCase()} / {model.subcategory.toUpperCase()}</li>
+                        </ul>
                 </div>
                 <button className="model-view-rotate-button"
                         onClick={() => {cameraControlRef.current?.rotate(DEG45, 0, true)}}>
@@ -125,6 +129,8 @@ export default function ModelViewerComponent({ outData }) {
                             }}>
                             <p>RESET VIEW</p>
                 </button>
+            </div>
+            <div className="model-view-exit">
                 <div className="exit-button-container" style={exitButtonContainer}>
                     <div className="exit-button" 
                          onClick={() => {outData()}}>
@@ -132,7 +138,7 @@ export default function ModelViewerComponent({ outData }) {
                     </div>
                 </div>
             </div>
-            <div className="model-view-container">
+            <div className="model-view-module">
             <>
                 <Canvas>
                 <Suspense fallback={<Loader />}>
@@ -142,6 +148,11 @@ export default function ModelViewerComponent({ outData }) {
                 </Suspense>
                 </Canvas>
             </>
+            </div>
+            <div className="model-view-information">
+                <div className="model-view-polycount">
+                    <p>{model.polycount[viewState.lod]} TRIANGLES</p>
+                </div>
             </div>
         </>
         )}
@@ -169,14 +180,8 @@ export function StandardCameraComponent(props) {
         <OrthographicCamera
             ref={cameraRef}
             makeDefault
-            zoom={parseInt(props.zoom)}
-            top={200}
-            bottom={-200}
-            left={200}
-            right={-200}
-            near={1}
-            far={2000}
             position={[200,90,200]}
+            zoom={props.zoom}
         />
         </>
     )
@@ -257,12 +262,11 @@ export function GLTFLoaderComponent(props) {
     const k = keys[1];
     const geo = nodes[k].geometry;
 
-    useEffect(() => {
-        console.log(gl.info);
-    },[]);
     return (
         <>
-
+        {view.wireframe == true && (
+            <mesh ref={wfRef} geometry={geo} material={materialWF.current}/>
+        )}
         {view.material == "solid" && (
             <>
             <mesh ref={meshRef} geometry={geo} material={materialSolid.current}>
