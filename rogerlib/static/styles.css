@@ -1767,7 +1767,8 @@ body:not(.loaded) #model-image img {
 .model-view-header-compact h2 {
     font-family: GaramondCondensed;
     font-weight: 400;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
+    font-style: italic;
     margin-top: 0.25rem;
     margin-left: 0rem;
     margin-bottom: 0;
@@ -1931,8 +1932,7 @@ body:not(.loaded) #model-image img {
     grid-column-end: -1;
     grid-row-start: 2;
     grid-row-end: -1;
-    max-width: calc(100% - 2rem);
-    width: calc(100% - 1rem);
+    width: 100%;
     height: calc(100% - 1rem);
     overflow-y: scroll;
     overflow-x: hidden;
@@ -1962,6 +1962,13 @@ body:not(.loaded) #model-image img {
     margin: auto;
     margin-top: 1rem;
     justify-content: flex-start;
+}
+.description-content-compact p {
+    font-family: GaramondCondensed;
+    font-weight: 200;
+    font-style: italic;
+    font-size: 1.2rem;
+    margin: 1rem 2rem 1rem;
 }
 .description-left p {
     margin-top: 0rem;

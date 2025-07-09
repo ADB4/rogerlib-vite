@@ -21,12 +21,6 @@ export default function ModelDescriptionComponent() {
     const modelDescription = {
         backgroundColor: darkMode ? "#1f1f1f":"white",
     };
-    const descriptionSerif = {
-        fontFamily: "Swiss721",
-        fontWeight: "200",
-        fontSize: "1.0rem",
-        margin: "1rem 2rem 1rem",
-    };
     const lods = model.lods;
     const outline = {
         outline: darkMode ? "1px solid black":"1px solid black",
@@ -68,8 +62,8 @@ export default function ModelDescriptionComponent() {
             <div className="model-view-description-compact" style={modelDescription}>
             <div className="description-content-compact">
                 <div id="description-block-A">
-                    <p style={descriptionSerif}>{model.description}</p>
-                    <p style={descriptionSerif}>{model.creatornote}</p>
+                    <p>{model.description}</p>
+                    <p>{model.creatornote}</p>
                 </div>
                 <div id="description-block-B">
                     <p id="description-material-left">{model.material.toUpperCase()}</p>
