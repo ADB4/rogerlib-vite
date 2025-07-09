@@ -47,7 +47,7 @@ export default function App() {
     }
 
     useLayoutEffect(() => {
-        //setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+        setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
     },[]);
     const rootContainerStyle: React.CSSProperties = {
         display: "grid",

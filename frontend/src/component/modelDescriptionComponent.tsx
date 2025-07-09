@@ -2,7 +2,7 @@ import * as React from "react"
 import { useState, useEffect } from "react";
 import { useModelContext, useDeviceContext, useColorModeContext } from "../context/galleryContext";
 
-export default function DescriptionComponent() {
+export default function ModelDescriptionComponent() {
     const model = useModelContext();
     const darkMode = useColorModeContext();
     const compactView = useDeviceContext();
@@ -101,7 +101,7 @@ export default function DescriptionComponent() {
                     <p>{content.tools.toUpperCase()}</p>
                     <p>{content.credits.toUpperCase()}</p>
                     <p>{content.license.toUpperCase()}</p>
-                    <p>{content.downloadnotice.toUpperCase()}</p>
+                    <p>TO DOWNLOAD THIS MODEL, PLEASE VISIT ON A DESKTOP OPERATING SYSTEM.</p>
                 </div>
             </div>
             </div>
