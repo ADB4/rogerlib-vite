@@ -51,14 +51,26 @@ export default function DetailContainerComponent({ outData }) {
         <>
         {compactView && (
         <div style={modelDetailContainer} id="model-detail-compact-outer">
-            <div className="exit-button-container" style={exitButtonContainer}>
-                <div className="exit-button" style={exitButtonStyle} onClick={() => {handleClose()}}>
-                        <p style={exitButtonText}>CLOSE</p>
-                </div>
-            </div>
+            <ModelViewerComponent outData={handleClose}/>
+        </div>
+        )}
+        {!compactView && (
+        <div style={modelDetailContainer} id="model-detail-standard-outer">
+            <ModelViewerComponent outData={handleClose}/>
+        </div>
+        )}
+        </>
+
+    )
+}
+
+/*
+                    <div id="model-detail-standard-right">
+                        <DetailHeaderComponent/>
+                    </div>
             {toggleView && (
                     <div id="model-detail-compact-left">
-                        <ModelViewerComponent/>
+                        <ModelViewerComponent outData={handleClose}/>
                     </div>
             )}
             {!toggleView && (
@@ -75,24 +87,6 @@ export default function DetailContainerComponent({ outData }) {
                     <p style={detailToggleText}>{toggleView ? "TOGGLE INFO":"TOGGLE VIEWER"}</p>
                 </button>
             </div>
-        </div>
-        )}
-        {!compactView && (
-        <div style={modelDetailContainer} id="model-detail-standard-outer">
-                    <div id="model-view-container">
-                        <ModelViewerComponent outData={handleClose}/>
-                    </div>
-        </div>
-        )}
-        </>
-
-    )
-}
-
-/*
-                    <div id="model-detail-standard-right">
-                        <DetailHeaderComponent/>
-                    </div>
 */
 export function DetailHeaderComponent() {
     const compactView = useDevice();

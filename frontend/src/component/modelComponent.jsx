@@ -1,4 +1,7 @@
 import * as React from "react"
+import DownloadComponent from "./downloadComponent";
+import DescriptionComponent from "./descriptionComponent";
+
 import { useState, useEffect, useRef, useReducer } from "react";
 import { ViewerStateContext, useViewerStateContext, useSelectorContext, SelectorContext, ViewerOptionsContext, useViewerOptionsContext, useColorModeContext, CameraContext, useModelContext, useDeviceContext } from "../context/galleryContext";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
@@ -52,6 +55,8 @@ export default function ModelViewerComponent({ outData }) {
         wireframe: true,
     });
 
+    const [toggleView, setToggleView] = useState(true);
+
     const cameraControlRef = useRef();
     const DEG45 = Math.PI / 4;
     const viewContainerStyle = {
@@ -64,6 +69,16 @@ export default function ModelViewerComponent({ outData }) {
     };
     const exitButtonText = {
         color: darkMode? "white":"white",
+    };
+    const detailToggle = {
+        backgroundColor: toggleView ? ("#E5FFFE") : ("#F9FFC7"),
+    };
+    const detailToggleDark = {
+        border: "none",
+        backgroundColor: toggleView ? ("#CBE3E2") : ("#E1E7A7"),
+    };
+    const detailToggleText = {
+        color: toggleView ? ("#3B6F88") : ("#7C4E00"),
     };
     function handleConfigUpdate(data) {
         // construct new active image url
@@ -81,6 +96,10 @@ export default function ModelViewerComponent({ outData }) {
             setActiveModels(modelArr);
         }
         dispatch({type: 'update', data: data});
+    }
+
+    function handleToggleView() {
+        setToggleView(!toggleView);
     }
 
     useEffect(() => {
@@ -107,17 +126,60 @@ export default function ModelViewerComponent({ outData }) {
     return (
         <>
         <ViewerStateContext.Provider value={viewState}>
+        {compactView && (
+        <>
+        <div className="model-view-header-compact">
+            <h2>{model.itemname.toUpperCase()}</h2>
+            <ul>
+                <li>VERSION {model.version}</li>
+                <li>{model.category.toUpperCase()} / {model.subcategory.toUpperCase()}</li>
+            </ul>
+        </div>
+        <div className="model-view-exit-compact">
+            <div className="exit-button-container" style={exitButtonContainer}>
+                <div className="exit-button" 
+                        onClick={() => {outData()}}>
+                        <p style={exitButtonText}>CLOSE</p>
+                </div>
+            </div>
+        </div>
+        {toggleView && (
+        <div id="model-detail-compact-left">
+            <ViewerDashboardComponent outData={handleConfigUpdate} />
+            <div className="model-view-module-compact">
+            <>
+                <Canvas>
+                <Suspense fallback={<Loader />}>
+                        <GLTFComponent models={activeModels} textures={activeTextureSet} itemcode={model.itemcode}/>
+                        <LightingComponent />
+                        <RotatingCameraComponent distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
+                </Suspense>
+                </Canvas>
+            </>
+            </div>
+        </div>
+        )}
+        {!toggleView && (
+        <>
+            <div id="model-detail-compact-right">
+                <DescriptionComponent/>
+            </div>
+        </>
+        )}
+        <div className="model-detail-toggle-container" style={detailToggle}>
+            <button className="model-detail-toggle-container-inner" onClick={() => handleToggleView()}
+            style={detailToggleDark}>
+                <p style={detailToggleText}>{toggleView ? "TOGGLE INFO":"TOGGLE VIEWER"}</p>
+            </button>
+        </div>
+        </>
+        )}
         {!compactView && (
         <>
+        <div id="model-view-standard">
             <ViewerDashboardComponent outData={handleConfigUpdate} />
             <div className="model-view-controller">
-                <div className="model-view-header">
-                        <h2>{model.itemname.toUpperCase()}</h2>
-                        <ul>
-                            <li>VERSION {model.version}</li>
-                            <li>{model.category.toUpperCase()} / {model.subcategory.toUpperCase()}</li>
-                        </ul>
-                </div>
+                <>
                 <button className="model-view-rotate-button"
                         onClick={() => {cameraControlRef.current?.rotate(DEG45, 0, true)}}>
                             <p>ROTATE THETA 45DEG</p>
@@ -129,6 +191,7 @@ export default function ModelViewerComponent({ outData }) {
                             }}>
                             <p>RESET VIEW</p>
                 </button>
+                </>
             </div>
             <div className="model-view-exit">
                 <div className="exit-button-container" style={exitButtonContainer}>
@@ -138,7 +201,7 @@ export default function ModelViewerComponent({ outData }) {
                     </div>
                 </div>
             </div>
-            <div className="model-view-module">
+            <div className="model-view-module-standard">
             <>
                 <Canvas>
                 <Suspense fallback={<Loader />}>
@@ -150,10 +213,26 @@ export default function ModelViewerComponent({ outData }) {
             </>
             </div>
             <div className="model-view-information">
-                <div className="model-view-polycount">
+                <div className="model-view-header">
+                        <h2>{model.itemname.toUpperCase()}</h2>
+                        <ul>
+                            <li>VERSION {model.version}</li>
+                            <li>{model.category.toUpperCase()} / {model.subcategory.toUpperCase()}</li>
+                        </ul>
+                </div>
+                <div className="model-view-statistics">
                     <p>{model.polycount[viewState.lod]} TRIANGLES</p>
+                    {viewState.color != "NULL" && viewState.material != "solid" && (
+                        <p>{model.colormap[viewState.color].toUpperCase()}</p>
+                    )}
+
                 </div>
             </div>
+            <div className="model-view-description">
+                <DescriptionComponent/>
+                <DownloadComponent item={model}/>
+            </div>
+        </div>
         </>
         )}
         </ViewerStateContext.Provider>
@@ -166,6 +245,49 @@ export default function ModelViewerComponent({ outData }) {
                             <RotatingCameraComponent distance={100} speed={0.01} zoom={compactView? model.zoom / 2.0 : model.zoom} camControls={cameraControlRef}/>
                             )}
 
+            <div className="model-view-exit">
+                <div className="exit-button-container" style={exitButtonContainer}>
+                    <div className="exit-button" 
+                         onClick={() => {outData()}}>
+                            <p style={exitButtonText}>CLOSE</p>
+                    </div>
+                </div>
+            </div>
+            <div className="model-view-information">
+                <div className="model-view-header">
+                        <h2>{model.itemname.toUpperCase()}</h2>
+                        <ul>
+                            <li>VERSION {model.version}</li>
+                            <li>{model.category.toUpperCase()} / {model.subcategory.toUpperCase()}</li>
+                        </ul>
+                </div>
+                <div className="model-view-statistics">
+                    <p>{model.polycount[viewState.lod]} TRIANGLES</p>
+                    {viewState.color != "NULL" && viewState.material != "solid" && (
+                        <p>{model.colormap[viewState.color].toUpperCase()}</p>
+                    )}
+
+                </div>
+            </div>
+            {toggleView && (
+                    <div id="model-detail-compact-left">
+                        <ModelViewerComponent outData={handleClose}/>
+                    </div>
+            )}
+            {!toggleView && (
+                <>
+                    <div id="model-detail-compact-right">
+                        <DetailHeaderComponent/>
+                        <DetailDescriptionComponent/>
+                    </div>
+                </>
+            )}
+            <div className="model-detail-toggle-container" style={detailToggle}>
+                <button className="model-detail-toggle-container-inner" onClick={() => handleToggleView()}
+                style={detailToggleDark}>
+                    <p style={detailToggleText}>{toggleView ? "TOGGLE INFO":"TOGGLE VIEWER"}</p>
+                </button>
+            </div>
 */
 export function StandardCameraComponent(props) {
     const { camera } = useThree();
@@ -210,14 +332,8 @@ export function RotatingCameraComponent(props) {
         <OrthographicCamera
             ref={cameraRef}
             makeDefault
-            zoom={parseInt(props.zoom)}
-            top={200}
-            bottom={-200}
-            left={200}
-            right={-200}
-            near={1}
-            far={2000}
             position={[200,90,200]}
+            zoom={props.zoom}
         />
         </>
     )
@@ -494,9 +610,9 @@ export function ViewerDashboardComponent({ outData }) {
     )}
     {compactView && (
         <div className="dashboard-container-compact">
-            <div id="dashboard">
+            <div id="dashboard-compact">
                 <ViewerOptionsContext.Provider value={optionsGlossary}>
-                    <div className="dashboard-fixed-container">
+                    <div className="dashboard-fixed-compact">
                         <DashboardSelectorComponent inData={materialSelector} outData={handleClick}/>
                     </div>
                     <div className="dashboard-flex-compact">
@@ -703,6 +819,7 @@ export function SelectorComponent({ inData, outData }) {
 }
 
 export function ColorSelectorComponent({ inData, outData}) {
+    const item = useModelContext();
     const view = useViewerStateContext();
 
     function handleSelect(value) {
@@ -722,9 +839,9 @@ export function ColorSelectorComponent({ inData, outData}) {
     }
     let paramHeaderStyle = {
         height: "1.2rem",
-        marginTop: "0rem",
-        marginBottom: "0rem",
         marginLeft: "0.5rem",
+        marginBottom: "0rem",
+        marginTop: "0rem",
         fontSize: "0.85rem",
         fontFamily: "Swiss721",
         fontWeight: "300",
@@ -733,30 +850,137 @@ export function ColorSelectorComponent({ inData, outData}) {
     return (
         <>
             <div id="color-selector-container">
-                <p style={paramHeaderStyle}>COLOR</p>
-                    <div className={inData.flexbox}>
-                    {inData.options.map((option) => (
-                        <>
-                        <div key={option} className="color-selector-outer">
-                            <button key={option}
-                                    id={'color-selector-'+option} 
-                                    onClick={() => handleSelect(option)}
-                                    style={{height: "1.0rem",
-                                            width:"1.0rem",
-                                            cursor: "pointer",
-                                            borderRadius:"0.5rem",
-                                            margin: "auto",
-                                            border:"none",
-                                            backgroundColor:option,
-                                            gridColumnStart: "1",
-                                            gridColumnEnd:"-1",
-                                            gridRowStart: "1",
-                                            gridRowEnd: "-1"}}/>
-                        </div>
-                        </>
-                    ))}
+                <p className="color-selector-header">COLOR</p>
+                <div className="color-selector-flex">
+                {inData.options.map((option) => (
+                    <>
+                    <div key={option} className="color-selector-outer">
+                        <button key={option}
+                                id={'color-selector-'+option} 
+                                onClick={() => handleSelect(option)}
+                                style={{height: "1.0rem",
+                                        width:"1.0rem",
+                                        cursor: "pointer",
+                                        borderRadius:"0.5rem",
+                                        margin: "auto",
+                                        border:"none",
+                                        backgroundColor:option,
+                                        gridColumnStart: "1",
+                                        gridColumnEnd:"-1",
+                                        gridRowStart: "1",
+                                        gridRowEnd: "-1"}}/>
                     </div>
+                    </>
+                ))}
+                </div>
             </div>
         </>
     );
+}
+
+export function DetailDescriptionComponent() {
+    const model = useModelContext();
+    const darkMode = useColorModeContext();
+    const [content, setContent] = useState({
+        'header': '',
+        'description': '',
+        'material': '',
+        'colors': '',
+        'colorString': '',
+        'lod': '',
+        'tools': 'Modeled and textured in Blender 3.3 and Adobe 3D Substance Painter 2024.',
+        'credits': 'Base maps by TCOM.',
+        'license': 'This work is licensed under CC BY-NC 4.0',
+        'downloadnotice': 'Downloads are fed from US-East S3 bucket. Always scan files that you download from the internet for viruses, malware, or other malicious software. ',
+    });
+    const compactView = useDeviceContext();
+
+    useEffect(() => {
+        const currentItem = model;
+
+        let colorString = "Available in ";
+        let i = 0;
+        for (;i < currentItem.colors.length;) {
+            const color = currentItem.colors[i];
+            const formattedString = currentItem.colormap[color];
+            // if last element, no comma
+            if (i == (currentItem.colors.length - 1)) {
+                colorString = colorString.concat(formattedString);
+            } else {
+                colorString = colorString.concat(formattedString+', ');
+            }
+            i = i+1;
+        }
+        const currentContent = {
+            'header': content.header,
+            'description': content.description,
+            'material': content.material,
+            'colors': content.colors,
+            'colorString': colorString.toUpperCase(),
+            'lod': content.lod,
+            'tools': content.tools,
+            'credits': content.credits,
+            'license': content.license,
+            'downloadnotice': content.downloadnotice,
+        };
+        setContent(currentContent);
+    }, [])
+
+    const modelDescription = {
+        backgroundColor: darkMode ? "#1f1f1f":"white",
+    };
+    const descriptionSerif = {
+        fontFamily: "Swiss721",
+        fontWeight: "200",
+        fontSize: "1.0rem",
+        margin: "1rem 2rem 1rem",
+    };
+    const lods = model.lods;
+    const outline = {
+        outline: darkMode ? "1px solid black":"1px solid black",
+    };
+    return (
+        <>
+            <div className="model-view-description-compact" style={modelDescription}>
+            <div className="description-content-compact">
+                <div id="description-block-A">
+                    <p style={descriptionSerif}>{model.description}</p>
+                    <p style={descriptionSerif}>{model.creatornote}</p>
+                </div>
+                <div id="description-block-B">
+                    <p id="description-material-left">{model.material.toUpperCase()}</p>
+                    <p id="description-material-right">{content.colorString}</p>
+                </div>
+                <div id="description-lod-container" style={outline}>
+                    <div id="description-lod-header">
+                            <p>LEVEL OF DETAIL</p>
+                    </div>
+                    <div id="description-lods-left">
+                        <ul>
+                            {lods.map((lod, i) => (
+                                <li key={lod}>LOD{i}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div id="description-lods-right">
+                        <ul id="description-lods-right">
+                            {lods.map((lod) => (
+                                <li key={lod}>{model.polycount[lod]}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div id="description-lod-footer">
+                        <p>TRIANGLES</p>
+                    </div>
+                </div>
+                <div id="description-credits-container">
+                    <p>{content.tools.toUpperCase()}</p>
+                    <p>{content.credits.toUpperCase()}</p>
+                    <p>{content.license.toUpperCase()}</p>
+                    <p>{content.downloadnotice.toUpperCase()}</p>
+                </div>
+            </div>
+            </div>
+        </>
+    )
 }
