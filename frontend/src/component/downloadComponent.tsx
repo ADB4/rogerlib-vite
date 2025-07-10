@@ -1,6 +1,6 @@
 import * as React from "react"
 
-export default function DownloadComponent({ inData }) {
+export default function DownloadComponent(props) {
     function handleClick(itemcode: string) {
         const url: string = "api/v1/downloads/" + itemcode;
         fetch(url, { 
@@ -21,12 +21,10 @@ export default function DownloadComponent({ inData }) {
     }
 
     return (
-        <div className="download-button-container">
             <div id="download-button" 
-                onClick={() => handleClick(inData.item.itemcode)}>
-                <p id="download-text-top">.ZIP FILE INCLUDES ALL LODS(FBX), PBR TEXTURES, AND LICENSE.</p>
+                onClick={() => handleClick(props.item.itemcode)}>
+                <p id="download-text-top">.ZIP FILE INCLUDES ALL LODS(FBX), TEXTURES.</p>
                 <p id="download-text-bottom">CLICK TO DOWNLOAD</p>
             </div>
-        </div>
     );
 }

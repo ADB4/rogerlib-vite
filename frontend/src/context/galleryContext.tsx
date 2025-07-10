@@ -51,7 +51,7 @@ export const useViewerStateContext = () => {
     return context;
 }
 export interface ViewerOptionsType {
-    [key: string]: string[];
+    [key: string]: string[] | DictType;
 }
 export const ViewerOptionsContext = createContext<ViewerOptionsType | undefined>(undefined);
 export const useViewerOptionsContext = () => {
