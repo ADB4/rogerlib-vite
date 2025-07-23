@@ -121,16 +121,3 @@ export default function CntctComponent({ outData }) {
     </>
     );
 }
-/*
-        <div className="markdown-landing-container" style={aboutparagraph}>
-            <Markdown className="markdown-landing">{content}</Markdown>
-        </div>
-        {!compactView && (
-        <>
-            <footer className="landing-footer">
-                <img className="graphic-rml" src="https://d2fhlomc9go8mv.cloudfront.net/static/graphics/RML_white.png" alt="Roger Motorsports Library logo, white"/>
-                <h4 style={footerText}>{footer}</h4>
-            </footer>
-        </>
-        )}
-        */
