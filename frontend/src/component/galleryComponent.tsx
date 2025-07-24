@@ -109,6 +109,7 @@ export default function GalleryComponent({ outData }) {
                             'imagepath': model.imagepath,
                             'images': model.images,
                             'models': model.models,
+                            'modelanimation': model.modelanimation,
                             'zoom': model.zoom,
                             'texturesets': model.texturesets,
                             'texturemap': model.texturemap,

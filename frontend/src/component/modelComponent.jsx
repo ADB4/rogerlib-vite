@@ -12,10 +12,13 @@ import {
     OrthographicCamera,
     Html,
     useProgress,
+    useAnimations,
     useGLTF,
     CameraControls,
     } from "@react-three/drei";
-
+import { 
+    GLTFLoader 
+} from 'three/examples/jsm/loaders/GLTFLoader';
 import * as THREE from 'three';
 import { Suspense } from "react";
 
@@ -339,7 +342,14 @@ export function GLTFComponent(props) {
     return (
         <>
             {props.models.map((model, i) => (
-                <GLTFLoaderComponent key={model} itemcode={item.itemcode} textures={props.textures[i]} filename={model}/>
+                <>
+                {props.textures[i].animation === "true" && (
+                    <GLTFAnimationLoaderComponent key={model} itemcode={item.itemcode} textures={props.textures[i]} filename={model}/> 
+                )}
+                {props.textures[i].animation === "false" && (
+                    <GLTFLoaderComponent key={model} itemcode={item.itemcode} textures={props.textures[i]} filename={model}/>
+                )}
+                </>
             ))}
         </>
     )
@@ -399,6 +409,61 @@ export function GLTFLoaderComponent(props) {
     )
 }
 
+export function GLTFAnimationLoaderComponent(props) {
+    const meshRef = useRef();
+    const wfRef = useRef();
+    const { gl, camera } = useThree();
+    const item = useModelContext();
+    const view = useViewerStateContext();
+
+    const { nodes, scene, animations } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/gltf/${props.filename}`);
+
+
+    // materials
+    const materialWF = useRef(new THREE.MeshBasicMaterial({color: 'red', wireframe: true }));
+    const materialSolid = useRef(new THREE.MeshStandardMaterial({ color: '#757575', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1}));
+
+    // the second key in nodes is our object name
+    const keys = Object.keys(nodes);
+    const k = keys[2];
+    const geo = nodes[k].geometry;
+
+    const { ref, mixer, names, actions, clips } = useAnimations(animations, scene);
+    useEffect(() => {
+        console.log(scene);
+        actions.ArmatureAction.play();
+    }, [actions]);
+    return (
+        <>
+        {view.wireframe == true && (
+            <mesh ref={wfRef} object={scene} material={materialWF.current}/>
+        )}
+        {view.material == "solid" && (
+            <>
+            <mesh ref={meshRef} object={scene} material={materialSolid.current}>
+            {view.shading == 'flat' && (
+                <meshBasicMaterial
+                    color="white"
+                />
+            )}
+            </mesh>
+            </>
+        )}
+        {view.material == "albedo" && (
+            <>
+            <mesh ref={meshRef} object={scene}>
+                {props.textures.alpha == 'true' && (
+                <TextureWithAlphaLoaderComponent key={props.key} textures={props.textures} itemcode={item.itemcode}/>
+                )}
+                {props.textures.alpha == 'false' && (
+                <TextureLoaderComponent key={props.key} textures={props.textures} itemcode={item.itemcode}/>
+                )}
+            </mesh>
+            </>
+        )}
+        </>
+    )
+}
 /*
 
         {view.wireframe == true && (
@@ -417,7 +482,7 @@ export function TextureLoaderComponent(props) {
     const item = useModelContext();
     const view = useViewerStateContext();
 
-    const [colorMap, normalMap, roughnessMap, metalnessMap] = props.textures.uniquevariants == "true" ? useLoader(THREE.TextureLoader, [
+    const [colorMap, normalMap, roughnessMap, metalnessMap] = props.textures.uniquevariants === "true" ? useLoader(THREE.TextureLoader, [
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_normal.jpg`,
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_roughness.jpg`,
@@ -429,6 +494,10 @@ export function TextureLoaderComponent(props) {
         `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_metallic.jpg`
     ]);
     colorMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = false;
+
+    useEffect(() => {
+        console.log(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`);
+    },[])
     return (
         <>
         {view.shading == 'flat' && (
