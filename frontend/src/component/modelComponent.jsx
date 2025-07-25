@@ -121,12 +121,12 @@ export default function ModelViewerComponent({ outData }) {
                 lod: lodString,
                 shading: 'studio',
                 material: 'solid',
-                color: 'NULL',
+                color: model.colorcodes[0],
                 wireframe: true,
             };
             dispatch({type: 'update', data: initialstate});
         }
-    }, [outData]);
+    }, []);
 
     return (
         <>
@@ -410,57 +410,128 @@ export function GLTFLoaderComponent(props) {
 }
 
 export function GLTFAnimationLoaderComponent(props) {
-    const meshRef = useRef();
-    const wfRef = useRef();
+    const group = useRef();
     const { gl, camera } = useThree();
     const item = useModelContext();
     const view = useViewerStateContext();
 
-    const { nodes, scene, animations } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/gltf/${props.filename}`);
+    const { nodes, materials, scene, animations } = useGLTF(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/gltf/${props.filename}`);
+    const { ref, mixer, names, actions, clips } = useAnimations(animations, group);
 
+    const animationNames = animations.map(clip => clip.name);
+    const [currentAnimation, setCurrentAnimation] = useState(null);
 
     // materials
-    const materialWF = useRef(new THREE.MeshBasicMaterial({color: 'red', wireframe: true }));
-    const materialSolid = useRef(new THREE.MeshStandardMaterial({ color: '#757575', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1}));
+    const [colorMap, normalMap, roughnessMap, metalnessMap] = props.textures.uniquevariants === "true" ? useLoader(THREE.TextureLoader, [
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_normal.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_roughness.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_metallic.jpg`
+    ]) : useLoader(THREE.TextureLoader, [
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_normal.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_roughness.jpg`,
+        `https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_metallic.jpg`
+    ]);
+    colorMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = false;
+
+    const materialWF = useRef(new THREE.MeshBasicMaterial({
+        color: 'red', 
+        wireframe: true,
+        transparent: true,
+        opacity: 0.5,
+        depthTest: true,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1,
+    }));
+    const materialAlbedo = useRef(new THREE.MeshStandardMaterial({
+        side: THREE.FrontSide,
+        map: colorMap, 
+        roughnessMap: roughnessMap,
+        metalnessMap: metalnessMap,
+        normalMap: normalMap
+    }));
+    const materialBasic = useRef(new THREE.MeshBasicMaterial({
+        map: colorMap,
+    }));
+    const materialSolid = useRef(new THREE.MeshStandardMaterial({ 
+        color: '#757575', 
+        polygonOffset: true, 
+        polygonOffsetFactor: 1, 
+        polygonOffsetUnits: 1}));
 
     // the second key in nodes is our object name
     const keys = Object.keys(nodes);
     const k = keys[2];
     const geo = nodes[k].geometry;
-
-    const { ref, mixer, names, actions, clips } = useAnimations(animations, scene);
     useEffect(() => {
-        console.log(scene);
-        actions.ArmatureAction.play();
-    }, [actions]);
+        if (group.current) {
+            const originalMeshes = []
+            group.current.traverse((child) => {
+                if (child.isMesh && child.geometry && !child.userData.isWireframe) {
+                    originalMeshes.push(child)
+                }
+            })
+
+            originalMeshes.forEach((mesh) => {
+                if (view.material == 'albedo') {
+                    if (view.shading == 'flat') {
+                        mesh.material = materialBasic.current;
+                    } else {
+                        mesh.material = materialAlbedo.current;
+                    }
+                } else {
+                    mesh.material = materialSolid.current;
+                }
+                // remove existing wireframe
+
+                const existingWireframe = mesh.parent.children.find(c => c.userData.isWireframe)
+                if (existingWireframe) {
+                    mesh.parent.remove(existingWireframe)
+                }
+                if (view.wireframe == true) {
+                    let wireframeMesh
+                    if (mesh.isSkinnedMesh) {
+                        wireframeMesh = mesh.clone()
+                        wireframeMesh.material = materialWF.current
+                        wireframeMesh.renderOrder = 1
+                    } else {
+                        wireframeMesh = new THREE.Mesh(
+                            mesh.geometry.clone(),
+                            materialWF.current
+                        )
+                        wireframeMesh.renderOrder = 1
+                    }
+                    wireframeMesh.userData.isWireframe = true
+                    mesh.parent.add(wireframeMesh)
+                }
+            })
+        }
+    }, [view]);
+
+    useEffect(() => {
+        if (animationNames.length > 0 && !currentAnimation) {
+            setCurrentAnimation(animationNames[0])
+        }
+    }, [animationNames, currentAnimation]);
+
+    useEffect(() => {
+        Object.values(actions).forEach(action => action.stop());
+        if (currentAnimation && actions[currentAnimation]) {
+            actions[currentAnimation]
+                .reset()
+                .setLoop(THREE.LoopRepeat)
+                .play()
+        }
+    }, [actions, currentAnimation]);
+
     return (
         <>
-        {view.wireframe == true && (
-            <mesh ref={wfRef} object={scene} material={materialWF.current}/>
-        )}
-        {view.material == "solid" && (
-            <>
-            <mesh ref={meshRef} object={scene} material={materialSolid.current}>
-            {view.shading == 'flat' && (
-                <meshBasicMaterial
-                    color="white"
-                />
-            )}
-            </mesh>
-            </>
-        )}
-        {view.material == "albedo" && (
-            <>
-            <mesh ref={meshRef} object={scene}>
-                {props.textures.alpha == 'true' && (
-                <TextureWithAlphaLoaderComponent key={props.key} textures={props.textures} itemcode={item.itemcode}/>
-                )}
-                {props.textures.alpha == 'false' && (
-                <TextureLoaderComponent key={props.key} textures={props.textures} itemcode={item.itemcode}/>
-                )}
-            </mesh>
-            </>
-        )}
+        <group ref={group} {...props} dispose={null}>
+            <primitive object={nodes.Scene || nodes.RootNode || Object.values(nodes)[0]}>
+            </primitive>
+        </group>
         </>
     )
 }
@@ -478,6 +549,7 @@ itemcode: string
 alpha: boolean
 displacement: boolean
 */
+
 export function TextureLoaderComponent(props) {
     const item = useModelContext();
     const view = useViewerStateContext();
@@ -495,9 +567,6 @@ export function TextureLoaderComponent(props) {
     ]);
     colorMap.flipY = normalMap.flipY = roughnessMap.flipY = metalnessMap.flipY = false;
 
-    useEffect(() => {
-        console.log(`https://d2fhlomc9go8mv.cloudfront.net/static/models/${item.itemcode}/tex/${props.textures.id}_${view.color}_color.jpg`);
-    },[])
     return (
         <>
         {view.shading == 'flat' && (
@@ -508,6 +577,7 @@ export function TextureLoaderComponent(props) {
         {view.shading != 'flat' && (
             <>
                 <meshStandardMaterial
+                    attach="material"
                     map={colorMap}
                     normalMap={normalMap}
                     roughnessMap={roughnessMap}

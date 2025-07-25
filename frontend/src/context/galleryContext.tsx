@@ -110,6 +110,7 @@ export interface ItemType {
     material: string;
     colormap: DictType;
     colors: string[];
+    colorcodes: string[];
     description: string;
     creatornote: string;
     shader: string;

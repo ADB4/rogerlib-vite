@@ -96,6 +96,7 @@ export default function GalleryComponent({ outData }) {
                             'itemname': model.itemname,
                             'material': model.material,
                             'colormap': model.colormap,
+                            'colorcodes': model.colorcodes,
                             'colors': model.colorcodes,
                             'lods': model.lods,
                             'lodmap': model.lodmap,

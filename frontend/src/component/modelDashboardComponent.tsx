@@ -186,11 +186,6 @@ export function DashboardSelectorComponent({ inData, outData }) {
             case 'material':
                 // if selecting solid material, clear chosen color
                 viewConfig['material'] = value;
-                if (value == 'solid') {
-                    viewConfig['color'] = null;
-                } else if (value == 'albedo') {
-                    viewConfig['color'] = parameters['color'][0];
-                }
                 break;
             case 'color':
                 // if selecting a color when material is solid, switch material to albedo
