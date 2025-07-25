@@ -96,6 +96,7 @@ export interface ItemType {
     imagepath: string;
     images: string[];
     models: string[]; // array where index corresponds to LOD
+    modelanimation: string;
     zoom: string;
     texturesets: TextureSetType[];
     texturemap: DictType;
@@ -109,6 +110,7 @@ export interface ItemType {
     material: string;
     colormap: DictType;
     colors: string[];
+    colorcodes: string[];
     description: string;
     creatornote: string;
     shader: string;

@@ -290,8 +290,9 @@ def fetch_all_json():
 def hydrate():
     data = fetch_json_local("_json/models_starter.json")
     result = data['models']
+    sorted_result = sorted(result, key=lambda x: x['itemcode'])
     models = []
-    for model in result:
+    for model in sorted_result:
         hydrated_model = parse_item(model)
         models.append(hydrated_model)
         json_ob = json.dumps(hydrated_model, indent=4)
