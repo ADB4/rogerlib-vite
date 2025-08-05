@@ -1,3 +1,5 @@
+/// <reference types="vitest" />
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -11,14 +13,18 @@ const noAttr = () => {
 }
 
 export default defineConfig({
-  plugins: [react(),noAttr()
-  ],
+  plugins: [react(),noAttr()],
   root: '../frontend/',
   publicDir: 'public/',
   server: {
     proxy: {
       '/api': 'http://127.0.0.1:5000'
     }
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/setupTest.ts'],
+    globals: true,
   },
   build: {
     rollupOptions: {
@@ -29,7 +35,7 @@ export default defineConfig({
       }
     },
     outDir: '../rogerlib/static/assets/'  // Build directly to backend folder
-  }
+  },
 
 })
 

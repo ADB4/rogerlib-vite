@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "types": ["jest", "node", "@testing-library/jest-dom"]
   },
   "files": [],
   "references": [
