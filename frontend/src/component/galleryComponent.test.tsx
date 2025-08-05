@@ -61,6 +61,8 @@ const mockItemData: ItemType = {
             maps: ["false"]
         }
   ],
+  modelanimation: "false",
+  colorcodes: ["red","white"],
   texturemap: {
     "lod0": "0",
     "lod1": "0"
