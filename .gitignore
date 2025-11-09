@@ -43,7 +43,6 @@ node_modules/
 bin/rogerlibhydrate
 rogerlib/static/icons/
 rogerlib/static/model/
-rogerlib/static/assets/
 rogerlib/static/images/
 rogerlib/static/fonts/
 rogerlib/static/markdown/
