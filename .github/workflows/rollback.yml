@@ -1,0 +1,26 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Docker image tag to rollback to'
+        required: true
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rollback on Digital Ocean
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            cd /opt/rogerlib
+            docker pull ${{ secrets.DOCKER_USERNAME }}/rogerlib:${{ github.event.inputs.version }}
+            docker tag ${{ secrets.DOCKER_USERNAME }}/rogerlib:${{ github.event.inputs.version }} \
+                       ${{ secrets.DOCKER_USERNAME }}/rogerlib:latest
+            docker-compose down
+            docker-compose up -d

@@ -9,6 +9,10 @@ import random
 import secrets
 from rogerlib.views.util import fetch_one_from_json, fetch_all_json, fetch_json_s3, fetch_categories, fetch_categories_json, fetch_presigned_url, fetch_quote_s3, fetch_markdown_s3, fetch_deets, fetch_changelog, hydrate
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return flask.jsonify({'status': 'healthy', 'version': '0.1.0'}), 200
+
 @app.route('/api/v1/cntct/', methods=['GET'])
 def get_cntct():
     cntct = "buiand@proton.me"
