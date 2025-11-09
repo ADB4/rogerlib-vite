@@ -45,7 +45,7 @@ jobs:
       
       - name: Deploy styles.css to S3
         run: |
-          aws s3 cp rogerlib/static/assets/styles.css \
+          aws s3 cp rogerlib/static/styles.css \
             s3://static.rogerlib.com/static/js/rogerlib/styles.css \
             --cache-control "public, max-age=31536000" \
             --content-type "text/css"
