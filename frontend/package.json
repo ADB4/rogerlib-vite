@@ -16,6 +16,7 @@
     "@react-three/drei": "^10.0.8",
     "@react-three/fiber": "^9.1.2",
     "ci": "^2.3.0",
+    "i": "^0.3.7",
     "leva": "^0.10.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -44,7 +45,7 @@
     "jsdom": "^26.1.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
-    "vite": "^6.3.5",
+    "vite": "^6.4.1",
     "vite-plugin-restart": "^0.4.2",
     "vitest": "^3.2.4"
   }
