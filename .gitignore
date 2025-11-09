@@ -77,7 +77,6 @@ do-rsa.pub
 build/
 develop-eggs/
 downloads/
-dist/
 eggs/
 .eggs/
 lib/
