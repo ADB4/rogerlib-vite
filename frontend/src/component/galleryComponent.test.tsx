@@ -34,6 +34,7 @@ const mockItemData: ItemType = {
     "standard": "Tsukuba Blue"
   },
   colors: ['red', 'blue'],
+  colorcodes: ['red', 'blue'],
   lods: ['high', 'medium'],
   lodmap: {
     "lod0": "LOD0",
@@ -43,11 +44,11 @@ const mockItemData: ItemType = {
     "lod0": "30634",
     "lod1": "4734"
   },
-  category: 'furniture',
-  subcategory: 'category1',
+  category: 'test',
+  subcategory: 'subcat_test',
   description: 'Test description',
   creatornote: 'Test note',
-  shader: 'standard',
+  shader: 'pbr',
   preview: 'https://example.com/preview.jpg',
   imagepath: '/images/',
   images: ['img1.jpg'],
@@ -62,7 +63,6 @@ const mockItemData: ItemType = {
         }
   ],
   modelanimation: "false",
-  colorcodes: ["red","white"],
   texturemap: {
     "lod0": "0",
     "lod1": "0"
