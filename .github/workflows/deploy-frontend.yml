@@ -1,0 +1,81 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '!frontend/node_modules/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run tests
+        working-directory: frontend
+        run: npm test -- --watchAll=false
+        continue-on-error: true
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to S3
+        working-directory: frontend/dist
+        run: |
+          # Upload bundle.js with cache busting
+          aws s3 cp bundle.js s3://${{ secrets.S3_BUCKET }}/bundle.js \
+            --cache-control "public, max-age=31536000" \
+            --metadata-directive REPLACE
+
+          # Upload CSS files
+          aws s3 sync . s3://${{ secrets.S3_BUCKET }}/ \
+            --exclude "*" \
+            --include "*.css" \
+            --cache-control "public, max-age=31536000" \
+            --metadata-directive REPLACE
+
+          # Upload other assets if any
+          aws s3 sync . s3://${{ secrets.S3_BUCKET }}/ \
+            --exclude "bundle.js" \
+            --exclude "*.css" \
+            --cache-control "public, max-age=31536000" \
+            --metadata-directive REPLACE
+
+      - name: Invalidate CloudFront (optional)
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✅ Frontend deployed successfully to S3!"
+          echo "Bundle URL: https://${{ secrets.S3_BUCKET }}.s3.amazonaws.com/bundle.js"
