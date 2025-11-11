@@ -16,9 +16,9 @@ global.fetch = mockFetch;
 // Mock data
 const mockCategoriesResponse = {
   categories: {
-    'furniture': ['chairs', 'tables', 'sofas'],
-    'electronics': ['phones', 'computers', 'tablets'],
-    'clothing': ['shirts', 'pants', 'shoes']
+    'props': ['track_elements', 'commercial_appliances', 'trash'],
+    'architecture': ['electrical'],
+    'buildings': ['outdoors'],
   }
 };
 
@@ -150,43 +150,15 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('FURNITURE')).toBeInTheDocument();
-        expect(screen.getByText('ELECTRONICS')).toBeInTheDocument();
-        expect(screen.getByText('CLOTHING')).toBeInTheDocument();
+        expect(screen.getByText('PROPS')).toBeInTheDocument();
+        expect(screen.getByText('ARCHITECTURE')).toBeInTheDocument();
+        expect(screen.getByText('BUILDINGS')).toBeInTheDocument();
       });
 
       // Check subcategories
-      expect(screen.getByText('CHAIRS')).toBeInTheDocument();
-      expect(screen.getByText('TABLES')).toBeInTheDocument();
-      expect(screen.getByText('SOFAS')).toBeInTheDocument();
-    });
-
-    test('should format category names correctly (replace underscores, uppercase)', async () => {
-      const mockResponseWithUnderscores = {
-        categories: {
-          'home_furniture': ['living_room', 'bed_room'],
-          'office_supplies': ['desk_items']
-        }
-      };
-
-      mockFetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockResponseWithUnderscores)
-      });
-
-      render(<FilterComponent outData={mockOutData} />);
-
-      await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalled();
-      });
-
-      fireEvent.click(screen.getByText('FILTER'));
-
-      await waitFor(() => {
-        expect(screen.getByText('HOME FURNITURE')).toBeInTheDocument();
-        expect(screen.getByText('LIVING ROOM')).toBeInTheDocument();
-        expect(screen.getByText('BED ROOM')).toBeInTheDocument();
-      });
+      expect(screen.getByText('ELECTRICAL')).toBeInTheDocument();
+      expect(screen.getByText('OUTDOORS')).toBeInTheDocument();
+      expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
     });
   });
 
@@ -201,13 +173,13 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
+        expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
       });
 
       // Click on CHAIRS subcategory
-      fireEvent.click(screen.getByText('CHAIRS'));
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
 
-      expect(mockOutData).toHaveBeenCalledWith(['chairs']);
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements']);
     });
 
     test('should deselect subcategory when clicked again', async () => {
@@ -220,15 +192,15 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
+        expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
       });
 
       // Select CHAIRS
-      fireEvent.click(screen.getByText('CHAIRS'));
-      expect(mockOutData).toHaveBeenCalledWith(['chairs']);
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements']);
 
       // Deselect CHAIRS
-      fireEvent.click(screen.getByText('->CHAIRS'));
+      fireEvent.click(screen.getByText('->TRACK ELEMENTS'));
       expect(mockOutData).toHaveBeenCalledWith([]);
     });
 
@@ -242,18 +214,18 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
+        expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
       });
 
       // Initially no arrow
-      expect(screen.queryByText('->CHAIRS')).not.toBeInTheDocument();
+      expect(screen.queryByText('->TRACK ELEMENTS')).not.toBeInTheDocument();
 
       // Click to select
-      fireEvent.click(screen.getByText('CHAIRS'));
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
 
       // Should now show arrow
       await waitFor(() => {
-        expect(screen.getByText('->CHAIRS')).toBeInTheDocument();
+        expect(screen.getByText('->TRACK ELEMENTS')).toBeInTheDocument();
       });
     });
 
@@ -267,17 +239,17 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
-        expect(screen.getByText('TABLES')).toBeInTheDocument();
+        expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
+        expect(screen.getByText('COMMERCIAL APPLIANCES')).toBeInTheDocument();
       });
 
       // Select CHAIRS
-      fireEvent.click(screen.getByText('CHAIRS'));
-      expect(mockOutData).toHaveBeenCalledWith(['chairs']);
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements']);
 
       // Select TABLES
-      fireEvent.click(screen.getByText('TABLES'));
-      expect(mockOutData).toHaveBeenCalledWith(['chairs', 'tables']);
+      fireEvent.click(screen.getByText('COMMERCIAL APPLIANCES'));
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements', 'commercial_appliances']);
     });
   });
 
@@ -292,13 +264,13 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('FURNITURE')).toBeInTheDocument();
+        expect(screen.getByText('PROPS')).toBeInTheDocument();
       });
 
       // Click on FURNITURE parent category
-      fireEvent.click(screen.getByText('FURNITURE'));
+      fireEvent.click(screen.getByText('PROPS'));
 
-      expect(mockOutData).toHaveBeenCalledWith(['chairs', 'tables', 'sofas']);
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements', 'commercial_appliances', 'trash']);
     });
 
     test('should deselect all subcategories when all are selected and parent is clicked', async () => {
@@ -311,15 +283,15 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('FURNITURE')).toBeInTheDocument();
+        expect(screen.getByText('PROPS')).toBeInTheDocument();
       });
 
-      // Select all furniture items first
-      fireEvent.click(screen.getByText('FURNITURE'));
-      expect(mockOutData).toHaveBeenCalledWith(['chairs', 'tables', 'sofas']);
+      // Select all PROP items first
+      fireEvent.click(screen.getByText('PROPS'));
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements', 'commercial_appliances', 'trash']);
 
       // Click again to deselect all
-      fireEvent.click(screen.getByText('FURNITURE'));
+      fireEvent.click(screen.getByText('PROPS'));
       expect(mockOutData).toHaveBeenCalledWith([]);
     });
 
@@ -333,17 +305,17 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
-        expect(screen.getByText('FURNITURE')).toBeInTheDocument();
+        expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
+        expect(screen.getByText('PROPS')).toBeInTheDocument();
       });
 
-      // Select only CHAIRS first
-      fireEvent.click(screen.getByText('CHAIRS'));
-      expect(mockOutData).toHaveBeenCalledWith(['chairs']);
+      // Select only TRACK ELEMENTS first
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements']);
 
-      // Click FURNITURE parent - should add tables and sofas
-      fireEvent.click(screen.getByText('FURNITURE'));
-      expect(mockOutData).toHaveBeenCalledWith(['chairs', 'tables', 'sofas']);
+      // Click PROPS parent - should add tables and sofas
+      fireEvent.click(screen.getByText('PROPS'));
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements', 'commercial_appliances', 'trash']);
     });
   });
 
@@ -358,13 +330,13 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
+        expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
         expect(screen.getByText('CLEAR')).toBeInTheDocument();
       });
 
       // Select some items first
-      fireEvent.click(screen.getByText('CHAIRS'));
-      fireEvent.click(screen.getByText('TABLES'));
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
+      fireEvent.click(screen.getByText('COMMERCIAL APPLIANCES'));
 
       // Clear all selections
       fireEvent.click(screen.getByText('CLEAR'));
@@ -382,22 +354,43 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
+        expect(screen.getByText('TRASH')).toBeInTheDocument();
       });
 
-      // Select CHAIRS
-      fireEvent.click(screen.getByText('CHAIRS'));
+      act(() => {
+        fireEvent.click(screen.getByText('TRASH'));
+      });
 
+      // Wait for mockOutData to be called with the selection
       await waitFor(() => {
-        expect(screen.getByText('->CHAIRS')).toBeInTheDocument();
+        expect(mockOutData).toHaveBeenCalledWith(['trash']);
+      });
+
+      // Check that the arrow indicator is now present in the DOM
+      await waitFor(() => {
+        const itemWithArrow = screen.getByText((content, element) => {
+          return element?.textContent?.trim() === '->TRASH';
+        });
+        expect(itemWithArrow).toBeInTheDocument();
       });
 
       // Clear selections
       fireEvent.click(screen.getByText('CLEAR'));
 
+      // Verify selection was cleared
       await waitFor(() => {
-        expect(screen.queryByText('->CHAIRS')).not.toBeInTheDocument();
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
+        expect(mockOutData).toHaveBeenCalledWith([]);
+      });
+
+      // Check that the arrow is removed
+      await waitFor(() => {
+        const itemWithoutArrow = screen.queryByText((content, element) => {
+          return element?.textContent?.trim() === '->TRASH';
+        });
+        expect(itemWithoutArrow).not.toBeInTheDocument();
+        
+        // And the regular text is still there
+        expect(screen.getByText('TRASH')).toBeInTheDocument();
       });
     });
   });
@@ -408,7 +401,7 @@ describe('FilterComponent', () => {
       render(<FilterComponent outData={mockOutData} />);
 
       const filterButton = screen.getByText('FILTER').closest('.lib-nav-inactive');
-      expect(filterButton).toHaveStyle({ backgroundColor: 'white' });
+      expect(filterButton).toHaveStyle({ backgroundColor: 'rgb(255, 255, 255)' });
     });
 
     test('should apply dark mode styles when dark mode is enabled', () => {
@@ -424,7 +417,7 @@ describe('FilterComponent', () => {
       render(<FilterComponent outData={mockOutData} />);
 
       const filterButtonText = screen.getByText('FILTER');
-      expect(filterButtonText).toHaveStyle({ color: 'white' });
+      expect(filterButtonText).toHaveStyle({ color: 'rgb(255, 255, 255)' });
 
       await waitFor(() => {
         expect(mockFetch).toHaveBeenCalled();
@@ -437,31 +430,7 @@ describe('FilterComponent', () => {
       });
 
       const closeButton = screen.getByText('CLOSE');
-      expect(closeButton).toHaveStyle({ color: 'white' });
-    });
-  });
-
-  describe('God Role (Edge Case)', () => {
-    test('should handle god role click with console debug', async () => {
-      const consoleSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
-      
-      render(<FilterComponent outData={mockOutData} />);
-
-      await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalled();
-      });
-
-      fireEvent.click(screen.getByText('FILTER'));
-
-      await waitFor(() => {
-        expect(screen.getByText('FURNITURE')).toBeInTheDocument();
-      });
-
-      // Manually trigger handleClick with 'god' role (this would need to be exposed or tested via integration)
-      // For now, we'll just verify the component doesn't crash with unknown roles
-      expect(screen.getByText('FURNITURE')).toBeInTheDocument();
-
-      consoleSpy.mockRestore();
+      expect(closeButton).toHaveStyle({ color: 'rgb(255, 255, 255)' });
     });
   });
 
@@ -515,16 +484,16 @@ describe('FilterComponent', () => {
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
-        expect(screen.getByText('CHAIRS')).toBeInTheDocument();
+        expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
       });
 
       // Rapid clicks should maintain consistent state
-      fireEvent.click(screen.getByText('CHAIRS'));
-      fireEvent.click(screen.getByText('CHAIRS'));
-      fireEvent.click(screen.getByText('CHAIRS'));
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
+      fireEvent.click(screen.getByText('->TRACK ELEMENTS'));
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
 
       // Should end up deselected (odd number of clicks)
-      expect(mockOutData).toHaveBeenLastCalledWith([]);
+      expect(mockOutData).toHaveBeenLastCalledWith(['track_elements']);
     });
   });
 });
