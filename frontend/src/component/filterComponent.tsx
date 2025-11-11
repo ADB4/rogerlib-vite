@@ -13,35 +13,35 @@ export default function FilterComponent({ outData }) {
     const [selection, setSelection] = useState<string[]>([]);
     const darkMode = useColorModeContext();
 
-
     function handleClick(data: string, role) {
-        let current: string[] = [];
         if (role == 'parent') {
-            current = selection;
-            // check if all subcategories are present in selection
+
+            let current = [...selection];
+
             if (categoryMap[data].every(item => selection.includes(item))) {
-                const newCurrent = current.filter(item => !categoryMap[data].includes(item));
-                current = newCurrent;
+                current = current.filter(item => !categoryMap[data].includes(item));
             } else {
                 for (const item of categoryMap[data]) {
-                    current.push(item);
+                    if (!current.includes(item)) {
+                        current.push(item);
+                    }
                 }
             }
+            setSelection(current);
             outData(current);
         } else if (role == 'god') {
             console.debug("Selecting all");
         } else {
-            current = selection;
             if (!selection.includes(data)) {
-                current.push(data);
+                const current = [...selection, data];
+                setSelection(current);
                 outData(current);
             } else {
-                const newCurrent = current.filter(item => item != data);
-                current = newCurrent;
-                outData(newCurrent);
+                const current = selection.filter(item => item !== data);
+                setSelection(current);
+                outData(current);
             }
         }
-        setSelection(current);
     }
     function toggleVisibility() {
         setVisible(!visible);
