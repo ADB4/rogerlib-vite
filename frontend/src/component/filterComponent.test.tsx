@@ -1,19 +1,17 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { act } from '@testing-library/react';
+
 import FilterComponent from './filterComponent';
 import { useColorModeContext } from '../context/galleryContext';
 
-// Mock the color mode context
 vi.mock('../context/galleryContext', () => ({
   useColorModeContext: vi.fn()
 }));
 
-// Mock fetch
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-// Mock data
 const mockCategoriesResponse = {
   categories: {
     'props': ['track_elements', 'commercial_appliances', 'trash'],
@@ -31,7 +29,7 @@ describe('FilterComponent', () => {
       ok: true,
       json: () => Promise.resolve(mockCategoriesResponse)
     });
-    mockUseColorModeContext.mockReturnValue(false); // Default to light mode
+    mockUseColorModeContext.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -95,19 +93,15 @@ describe('FilterComponent', () => {
     test('should toggle visibility when filter button is clicked', async () => {
       render(<FilterComponent outData={mockOutData} />);
 
-      // Wait for categories to load
       await waitFor(() => {
         expect(mockFetch).toHaveBeenCalled();
       });
 
-      // Initially should show FILTER button
       expect(screen.getByText('FILTER')).toBeInTheDocument();
       expect(screen.queryByText('CLOSE')).not.toBeInTheDocument();
 
-      // Click to open filter
       fireEvent.click(screen.getByText('FILTER'));
 
-      // Should now show the filter panel
       await waitFor(() => {
         expect(screen.getByText('CLOSE')).toBeInTheDocument();
       });
@@ -121,14 +115,12 @@ describe('FilterComponent', () => {
         expect(mockFetch).toHaveBeenCalled();
       });
 
-      // Open filter panel
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
         expect(screen.getByText('CLOSE')).toBeInTheDocument();
       });
 
-      // Close filter panel
       fireEvent.click(screen.getByText('CLOSE'));
 
       await waitFor(() => {
@@ -146,7 +138,6 @@ describe('FilterComponent', () => {
         expect(mockFetch).toHaveBeenCalled();
       });
 
-      // Open filter panel
       fireEvent.click(screen.getByText('FILTER'));
 
       await waitFor(() => {
@@ -155,7 +146,6 @@ describe('FilterComponent', () => {
         expect(screen.getByText('BUILDINGS')).toBeInTheDocument();
       });
 
-      // Check subcategories
       expect(screen.getByText('ELECTRICAL')).toBeInTheDocument();
       expect(screen.getByText('OUTDOORS')).toBeInTheDocument();
       expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
@@ -176,7 +166,6 @@ describe('FilterComponent', () => {
         expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
       });
 
-      // Click on CHAIRS subcategory
       fireEvent.click(screen.getByText('TRACK ELEMENTS'));
 
       expect(mockOutData).toHaveBeenCalledWith(['track_elements']);
@@ -195,15 +184,41 @@ describe('FilterComponent', () => {
         expect(screen.getByText('TRACK ELEMENTS')).toBeInTheDocument();
       });
 
-      // Select CHAIRS
       fireEvent.click(screen.getByText('TRACK ELEMENTS'));
       expect(mockOutData).toHaveBeenCalledWith(['track_elements']);
 
-      // Deselect CHAIRS
       fireEvent.click(screen.getByText('->TRACK ELEMENTS'));
       expect(mockOutData).toHaveBeenCalledWith([]);
     });
 
+    test('should select subsets 1', async () => {
+      render(<FilterComponent outData={mockOutData} />);
+
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalled();
+      });
+
+      fireEvent.click(screen.getByText('FILTER'));
+
+      await waitFor(() => {
+        expect(screen.getByText('COMMERCIAL APPLIANCES')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByText('TRACK ELEMENTS'));
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements']);
+
+      fireEvent.click(screen.getByText('COMMERCIAL APPLIANCES'));
+      expect(mockOutData).toHaveBeenCalledWith(['track_elements','commercial_appliances']);
+
+      expect(mockOutData).not.toHaveBeenCalledWith(['trash']);
+
+
+      fireEvent.click(screen.getByText('TRASH'));
+    
+      const lastCall = mockOutData.mock.calls[mockOutData.mock.calls.length - 1][0];
+      expect(lastCall).toHaveLength(3);
+      expect(lastCall).toEqual(expect.arrayContaining(['track_elements', 'commercial_appliances', 'trash']));
+    });
     test('should show selection indicator (arrow) for selected items', async () => {
       render(<FilterComponent outData={mockOutData} />);
 
@@ -243,11 +258,9 @@ describe('FilterComponent', () => {
         expect(screen.getByText('COMMERCIAL APPLIANCES')).toBeInTheDocument();
       });
 
-      // Select CHAIRS
       fireEvent.click(screen.getByText('TRACK ELEMENTS'));
       expect(mockOutData).toHaveBeenCalledWith(['track_elements']);
 
-      // Select TABLES
       fireEvent.click(screen.getByText('COMMERCIAL APPLIANCES'));
       expect(mockOutData).toHaveBeenCalledWith(['track_elements', 'commercial_appliances']);
     });
@@ -267,7 +280,6 @@ describe('FilterComponent', () => {
         expect(screen.getByText('PROPS')).toBeInTheDocument();
       });
 
-      // Click on FURNITURE parent category
       fireEvent.click(screen.getByText('PROPS'));
 
       expect(mockOutData).toHaveBeenCalledWith(['track_elements', 'commercial_appliances', 'trash']);
